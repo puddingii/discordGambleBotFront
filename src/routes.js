@@ -17,7 +17,7 @@
 */
 import Dashboard from 'views/Dashboard.js';
 import UserProfile from 'views/UserProfile.js';
-import TableList from 'views/TableList.js';
+import StockList from 'views/StockList.js';
 import Typography from 'views/Typography.js';
 import Icons from 'views/Icons.js';
 import Notifications from 'views/Notifications.js';
@@ -47,10 +47,10 @@ const dashboardRoutes = [
 		layout: '/admin',
 	},
 	{
-		path: '/table',
-		name: 'Table List',
+		path: '/stock',
+		name: 'Stock List',
 		icon: 'nc-icon nc-notes',
-		component: TableList,
+		component: StockList,
 		layout: '/admin',
 	},
 	{
