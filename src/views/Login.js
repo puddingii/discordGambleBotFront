@@ -1,4 +1,6 @@
 import axios from 'axios';
+import { useUserLogoutMutation, useUserLoginMutation } from 'quires/useUserMutation';
+import { useGetUserQuery } from 'quires/useUserQuery';
 import React from 'react';
 
 // react-bootstrap components
@@ -16,19 +18,16 @@ import {
 import { useForm } from 'react-hook-form';
 
 function Login() {
+	// const { data } = useGetUserQuery();
+
+	const { mutate: loginMutate } = useUserLoginMutation();
+	const { mutate: logoutMutate } = useUserLogoutMutation();
+
 	const { register, handleSubmit } = useForm();
-	const onSubmit = async ({ nickname, password }) => {
-		console.log(nickname, password);
-		const result = await axios.post(
-			'http://localhost:3300/user/login',
-			{
-				nickname,
-				password,
-			},
-			{ withCredentials: true },
-		);
-		console.log(result);
+	const onSubmit = loginInfo => {
+		loginMutate(loginInfo);
 	};
+	// console.log(data);
 	return (
 		<>
 			<Container fluid>
@@ -58,11 +57,7 @@ function Login() {
 							<Button
 								variant="primary"
 								onClick={() => {
-									const result = axios.post(
-										'http://localhost:3300/user/logout',
-										{},
-										{ withCredentials: true },
-									);
+									logoutMutate();
 								}}
 							>
 								?
