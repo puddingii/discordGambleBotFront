@@ -22,6 +22,7 @@ import Typography from 'views/Typography.js';
 import Icons from 'views/Icons.js';
 import Notifications from 'views/Notifications.js';
 import Upgrade from 'views/Upgrade.js';
+import Login from 'views/Login.js';
 
 const dashboardRoutes = [
 	{
@@ -72,6 +73,13 @@ const dashboardRoutes = [
 		name: 'Notifications',
 		icon: 'nc-icon nc-bell-55',
 		component: Notifications,
+		layout: '/admin',
+	},
+	{
+		path: '/login',
+		name: 'Login',
+		icon: 'nc-icon nc-bell-55',
+		component: Login,
 		layout: '/admin',
 	},
 ];

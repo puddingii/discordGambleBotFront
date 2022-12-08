@@ -56,9 +56,7 @@ function MyVerticallyCenteredModal({ onHide, show }) {
 										style={{ height: 38 }}
 										{...register('type', {
 											value: 'buy',
-											onChange: () => {
-												calcTotalMoney();
-											},
+											onChange: calcTotalMoney,
 										})}
 									>
 										<option value="buy">매수</option>
@@ -74,9 +72,7 @@ function MyVerticallyCenteredModal({ onHide, show }) {
 										type="number"
 										isInvalid={errors.cnt}
 										{...register('cnt', {
-											onChange: () => {
-												calcTotalMoney();
-											},
+											onChange: calcTotalMoney,
 											min: 1,
 										})}
 										min={1}
