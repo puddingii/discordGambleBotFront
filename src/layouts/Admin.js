@@ -15,9 +15,10 @@
 * The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
 
 */
-import React, { Component } from 'react';
+import React from 'react';
 import { useLocation, Route, Switch } from 'react-router-dom';
 import { useRecoilValue } from 'recoil';
+import { useIsMutating } from 'react-query';
 
 import AdminNavbar from 'components/Navbars/AdminNavbar';
 import Footer from 'components/Footer/Footer';
@@ -27,16 +28,15 @@ import routes from 'routes.js';
 
 import sidebarImage from 'assets/img/sidebar-4.jpg';
 import { useGetIsLoginQuery } from 'quires/useUserQuery';
-import { loginStatus } from 'recoils/user';
+import { isLoggedIn } from 'recoils/user';
+import { Spinner } from 'react-bootstrap';
 
 function Admin() {
+	const isMutating = useIsMutating();
 	useGetIsLoginQuery();
-	const isLoggedIn = useRecoilValue(loginStatus);
+	const loginStatus = useRecoilValue(isLoggedIn);
 
-	const myRoutes = routes.filter(route => route.isLoginRequired === isLoggedIn);
-	const [image, setImage] = React.useState(sidebarImage);
-	const [color, setColor] = React.useState('black');
-	const [hasImage, setHasImage] = React.useState(true);
+	const myRoutes = routes.filter(route => route.isLoginRequired === loginStatus);
 	const location = useLocation();
 	const mainPanel = React.useRef(null);
 	const getRoutes = routes => {
@@ -69,13 +69,20 @@ function Admin() {
 	return (
 		<>
 			<div className="wrapper">
-				<Sidebar color={color} image={hasImage ? image : ''} routes={myRoutes} />
+				<Sidebar color={'black'} image={sidebarImage} routes={myRoutes} />
 				<div className="main-panel" ref={mainPanel}>
-					<AdminNavbar />
+					{loginStatus ? <AdminNavbar /> : null}
 					<div className="content">
-						<Switch>{getRoutes(myRoutes)}</Switch>
+						<Switch>
+							{getRoutes(myRoutes)}
+							{isMutating ? (
+								<Spinner animation="border" role="status">
+									<span className="sr-only">Loading...</span>
+								</Spinner>
+							) : null}
+						</Switch>
 					</div>
-					<Footer />
+					{loginStatus ? <Footer /> : null}
 				</div>
 			</div>
 		</>

@@ -1,22 +1,16 @@
 import { atom, selector } from 'recoil';
 
-export const userState = atom({
-	key: 'userState',
-	default: {
-		isLoggedIn: false,
-	},
+export const isLoggedIn = atom({
+	key: 'isLoggedIn',
+	default: false,
 });
 
-export const loginStatus = selector({
-	key: 'loginStatus',
-	get: ({ get }) => {
-		const user = get(userState);
-
-		return user.isLoggedIn;
-	},
+export const myNickname = atom({
+	key: 'myNickname',
+	default: '',
 });
 
 export default {
-	userState,
-	loginStatus,
+	isLoggedIn,
+	myNickname,
 };
