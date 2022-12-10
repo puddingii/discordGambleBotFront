@@ -25,18 +25,18 @@ import Upgrade from 'views/Upgrade.js';
 import Login from 'views/Login.js';
 
 const dashboardRoutes = [
-	{
-		upgrade: true,
-		path: '/upgrade',
-		name: 'Upgrade to PRO',
-		icon: 'nc-icon nc-alien-33',
-		component: Upgrade,
-		layout: '/admin',
-		isLoginRequired: true,
-	},
+	// {
+	// 	upgrade: true,
+	// 	path: '/upgrade',
+	// 	name: 'Upgrade to PRO',
+	// 	icon: 'nc-icon nc-alien-33',
+	// 	component: Upgrade,
+	// 	layout: '/admin',
+	// 	isLoginRequired: true,
+	// },
 	{
 		path: '/dashboard',
-		name: 'Dashboard',
+		name: '내 대시보드',
 		icon: 'nc-icon nc-chart-pie-35',
 		component: Dashboard,
 		layout: '/admin',
@@ -44,7 +44,7 @@ const dashboardRoutes = [
 	},
 	{
 		path: '/user',
-		name: 'User Profile',
+		name: '유저정보',
 		icon: 'nc-icon nc-circle-09',
 		component: UserProfile,
 		layout: '/admin',
@@ -52,7 +52,7 @@ const dashboardRoutes = [
 	},
 	{
 		path: '/stock',
-		name: 'Stock List',
+		name: '주식정보',
 		icon: 'nc-icon nc-notes',
 		component: StockList,
 		layout: '/admin',

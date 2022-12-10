@@ -15,13 +15,11 @@
 * The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
 
 */
-import React, { Component } from 'react';
+import React from 'react';
 import { useLocation, NavLink } from 'react-router-dom';
 import PropTypes from 'prop-types';
 
 import { Nav } from 'react-bootstrap';
-
-import logo from 'assets/img/reactlogo.png';
 
 /**
  * @param {object} Sidebar
@@ -44,16 +42,13 @@ function Sidebar({ color, image, routes }) {
 			/>
 			<div className="sidebar-wrapper">
 				<div className="logo d-flex align-items-center justify-content-start">
-					<a
-						href="https://www.creative-tim.com?ref=lbd-sidebar"
-						className="simple-text logo-mini mx-1"
-					>
+					<a href="https://github.com/puddingii" className="simple-text logo-mini mx-1">
 						<div className="logo-img">
-							<img src={require('assets/img/reactlogo.png')} alt="..." />
+							<img src={require('assets/img/black-cow2.jpeg')} alt="..." />
 						</div>
 					</a>
-					<a className="simple-text" href="http://www.creative-tim.com">
-						Creative Tim
+					<a className="simple-text" href="https://github.com/puddingii">
+						디 코 봇
 					</a>
 				</div>
 				<Nav>

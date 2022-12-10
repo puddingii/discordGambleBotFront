@@ -1,25 +1,11 @@
-import axios from 'axios';
 import { useUserLogoutMutation, useUserLoginMutation } from 'quires/useUserMutation';
-import { useGetUserQuery } from 'quires/useUserQuery';
 import React from 'react';
 
 // react-bootstrap components
-import {
-	Badge,
-	Button,
-	Card,
-	Form,
-	Navbar,
-	Nav,
-	Container,
-	Row,
-	Col,
-} from 'react-bootstrap';
+import { Button, Form, Container, Row, Col } from 'react-bootstrap';
 import { useForm } from 'react-hook-form';
 
 function Login() {
-	// const { data } = useGetUserQuery();
-
 	const { mutate: loginMutate } = useUserLoginMutation();
 	const { mutate: logoutMutate } = useUserLogoutMutation();
 
@@ -27,7 +13,6 @@ function Login() {
 	const onSubmit = loginInfo => {
 		loginMutate(loginInfo);
 	};
-	// console.log(data);
 	return (
 		<>
 			<Container fluid>
