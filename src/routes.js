@@ -32,6 +32,7 @@ const dashboardRoutes = [
 		icon: 'nc-icon nc-alien-33',
 		component: Upgrade,
 		layout: '/admin',
+		isLoginRequired: true,
 	},
 	{
 		path: '/dashboard',
@@ -39,6 +40,7 @@ const dashboardRoutes = [
 		icon: 'nc-icon nc-chart-pie-35',
 		component: Dashboard,
 		layout: '/admin',
+		isLoginRequired: true,
 	},
 	{
 		path: '/user',
@@ -46,6 +48,7 @@ const dashboardRoutes = [
 		icon: 'nc-icon nc-circle-09',
 		component: UserProfile,
 		layout: '/admin',
+		isLoginRequired: true,
 	},
 	{
 		path: '/stock',
@@ -53,6 +56,7 @@ const dashboardRoutes = [
 		icon: 'nc-icon nc-notes',
 		component: StockList,
 		layout: '/admin',
+		isLoginRequired: true,
 	},
 	{
 		path: '/typography',
@@ -60,6 +64,7 @@ const dashboardRoutes = [
 		icon: 'nc-icon nc-paper-2',
 		component: Typography,
 		layout: '/admin',
+		isLoginRequired: true,
 	},
 	{
 		path: '/icons',
@@ -67,6 +72,7 @@ const dashboardRoutes = [
 		icon: 'nc-icon nc-atom',
 		component: Icons,
 		layout: '/admin',
+		isLoginRequired: true,
 	},
 	{
 		path: '/notifications',
@@ -74,6 +80,7 @@ const dashboardRoutes = [
 		icon: 'nc-icon nc-bell-55',
 		component: Notifications,
 		layout: '/admin',
+		isLoginRequired: true,
 	},
 	{
 		path: '/login',
@@ -81,6 +88,7 @@ const dashboardRoutes = [
 		icon: 'nc-icon nc-bell-55',
 		component: Login,
 		layout: '/admin',
+		isLoginRequired: false,
 	},
 ];
 

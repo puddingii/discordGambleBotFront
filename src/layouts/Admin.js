@@ -17,6 +17,7 @@
 */
 import React, { Component } from 'react';
 import { useLocation, Route, Switch } from 'react-router-dom';
+import { useRecoilValue } from 'recoil';
 
 import AdminNavbar from 'components/Navbars/AdminNavbar';
 import Footer from 'components/Footer/Footer';
@@ -25,8 +26,14 @@ import Sidebar from 'components/Sidebar/Sidebar';
 import routes from 'routes.js';
 
 import sidebarImage from 'assets/img/sidebar-4.jpg';
+import { useGetIsLoginQuery } from 'quires/useUserQuery';
+import { loginStatus } from 'recoils/user';
 
 function Admin() {
+	useGetIsLoginQuery();
+	const isLoggedIn = useRecoilValue(loginStatus);
+
+	const myRoutes = routes.filter(route => route.isLoginRequired === isLoggedIn);
 	const [image, setImage] = React.useState(sidebarImage);
 	const [color, setColor] = React.useState('black');
 	const [hasImage, setHasImage] = React.useState(true);
@@ -62,11 +69,11 @@ function Admin() {
 	return (
 		<>
 			<div className="wrapper">
-				<Sidebar color={color} image={hasImage ? image : ''} routes={routes} />
+				<Sidebar color={color} image={hasImage ? image : ''} routes={myRoutes} />
 				<div className="main-panel" ref={mainPanel}>
 					<AdminNavbar />
 					<div className="content">
-						<Switch>{getRoutes(routes)}</Switch>
+						<Switch>{getRoutes(myRoutes)}</Switch>
 					</div>
 					<Footer />
 				</div>
