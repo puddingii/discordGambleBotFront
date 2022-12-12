@@ -27,7 +27,7 @@ import Sidebar from 'components/Sidebar/Sidebar';
 import routes from 'routes.js';
 
 import sidebarImage from 'assets/img/sidebar-4.jpg';
-import { useGetIsLoginQuery } from 'quires/useUserQuery';
+import { useGetIsLoginQuery } from 'quires/useAuthQuery';
 import { isLoggedIn } from 'recoils/user';
 import { Spinner } from 'react-bootstrap';
 

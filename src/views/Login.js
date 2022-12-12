@@ -1,4 +1,4 @@
-import { useUserLogoutMutation, useUserLoginMutation } from 'quires/useUserMutation';
+import { useUserLogoutMutation, useUserLoginMutation } from 'quires/useAuthMutation';
 import React from 'react';
 
 // react-bootstrap components

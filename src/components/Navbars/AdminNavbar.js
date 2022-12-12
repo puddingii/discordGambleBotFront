@@ -18,11 +18,14 @@
 import React from 'react';
 import { useLocation } from 'react-router-dom';
 import { Navbar, Container, Nav, Dropdown, Button } from 'react-bootstrap';
+import { useRecoilValue } from 'recoil';
 
 import routes from 'routes.js';
-import { useUserLogoutMutation } from 'quires/useUserMutation';
+import { useUserLogoutMutation } from 'quires/useAuthMutation';
+import { myNickname } from 'recoils/user';
 
 function Header() {
+	const nickname = useRecoilValue(myNickname);
 	const { mutate: logoutMutate } = useUserLogoutMutation();
 	const location = useLocation();
 	const mobileSidebarToggle = e => {
@@ -99,6 +102,11 @@ function Header() {
 									</Dropdown.Item>
 								</Dropdown.Menu>
 							</Dropdown>
+							<Nav.Item>
+								<Nav.Link className="m-0" href="#pablo" onClick={e => e.preventDefault()}>
+									<span className="d-lg-block">접속중: {nickname}</span>
+								</Nav.Link>
+							</Nav.Item>
 							<Nav.Item>
 								<Nav.Link
 									className="m-0"
