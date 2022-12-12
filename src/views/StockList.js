@@ -1,22 +1,16 @@
 import MyVerticallyCenteredModal from 'components/Modal/TradeStockModal';
+import { useGetUserStockListQuery } from 'quires/useUserQuery';
 import React from 'react';
 
 // react-bootstrap components
-import {
-	Badge,
-	Button,
-	Card,
-	Navbar,
-	Nav,
-	Table,
-	Container,
-	Row,
-	Col,
-	ProgressBar,
-} from 'react-bootstrap';
+import { Button, Card, Table, Container, Row, Col, ProgressBar } from 'react-bootstrap';
+import { getStockName } from 'util/stock';
+import { setComma } from 'util/util';
 
 function TableList() {
 	const [modalShow, setModalShow] = React.useState(false);
+	const { data: stockList } = useGetUserStockListQuery();
+	console.log(stockList);
 	return (
 		<>
 			<Container fluid>
@@ -41,27 +35,38 @@ function TableList() {
 											<th className="border-0">매수/매도</th>
 										</tr>
 									</thead>
-									<tbody>
-										<tr>
-											<td>1</td>
-											<td>[주식]무야호</td>
-											<td>$1,336,738/-33.33%</td>
-											<td>1,336,738/-33.33%</td>
-											<td>10개</td>
-											<td>
-												<ProgressBar striped variant="success" label={'40%'} now={40} />
-											</td>
-											<td>
-												<Button
-													onClick={() => setModalShow(true)}
-													variant="danger"
-													size="sm"
-												>
-													매수/매도
-												</Button>
-											</td>
-										</tr>
-									</tbody>
+									{stockList.map((myStock, key) => {
+										return (
+											<tbody key={key}>
+												<tr>
+													<td>1</td>
+													<td>
+														[{getStockName(myStock.stock.type)}]{myStock.stock.name}
+													</td>
+													<td>{setComma(myStock.value, true)}원/-33.33%</td>
+													<td>{setComma(myStock.stock.value, true)}원/-33.33%</td>
+													<td>10개</td>
+													<td>
+														<ProgressBar
+															striped
+															variant="success"
+															label={'40%'}
+															now={40}
+														/>
+													</td>
+													<td>
+														<Button
+															onClick={() => setModalShow(true)}
+															variant="danger"
+															size="sm"
+														>
+															매수/매도
+														</Button>
+													</td>
+												</tr>
+											</tbody>
+										);
+									})}
 								</Table>
 							</Card.Body>
 						</Card>
