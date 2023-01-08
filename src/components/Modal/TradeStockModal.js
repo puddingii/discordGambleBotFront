@@ -1,19 +1,39 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Modal, Button, Form, Container, Row, Col, Table } from 'react-bootstrap';
 import PropTypes from 'prop-types';
 import { useForm } from 'react-hook-form';
 
+import axios from 'axios';
+import { getStockName } from 'util/stock';
 import { setComma } from '../../util/util';
 
-function MyVerticallyCenteredModal({ onHide, show }) {
-	const money = 100_000;
+function MyVerticallyCenteredModal({ onHide, show, myStockInfo }) {
 	const {
 		register,
 		handleSubmit,
 		formState: { errors },
 		getValues,
 	} = useForm();
-	const [totalMoney, setTotalMoney] = useState(money);
+	const [totalMoney, setTotalMoney] = useState(0);
+	const [stockInfo, setStockInfo] = useState({});
+	const [isLoadingInfo, setLoadingInfo] = useState(false);
+
+	const fetchData = async name => {
+		setLoadingInfo(true);
+		const result = await axios.get(`${process.env.REACT_APP_BACK_API}/api/stock`, {
+			withCredentials: true,
+			params: { name },
+		});
+		setLoadingInfo(false);
+		setStockInfo(result.data);
+		setTotalMoney(Math.floor(result?.data?.value ?? 0));
+	};
+
+	useEffect(() => {
+		if (myStockInfo?.name) {
+			fetchData(myStockInfo.name);
+		}
+	}, [myStockInfo]);
 	const onSubmit = data => {
 		console.log(data);
 		onHide();
@@ -22,12 +42,14 @@ function MyVerticallyCenteredModal({ onHide, show }) {
 		const type = getValues('type');
 		const cnt = getValues('cnt');
 
-		setTotalMoney(cnt * money * (type === 'sell' ? 0.97 : 1));
+		setTotalMoney(
+			Math.floor(cnt * (stockInfo?.value ?? 0) * (type === 'sell' ? 0.97 : 1)),
+		);
 	};
 
 	return (
 		<Modal
-			show={show}
+			show={show && myStockInfo?.name}
 			onHide={onHide}
 			size="lg"
 			aria-labelledby="example-modal-sizes-title-lg"
@@ -35,14 +57,18 @@ function MyVerticallyCenteredModal({ onHide, show }) {
 			<Form onSubmit={handleSubmit(onSubmit)}>
 				<Modal.Header id="example-modal-sizes-title-lg">
 					<Modal.Title>
-						<b>[주식] 무야호 - 개당: {setComma(100000)} / 배당: 0.3% </b>{' '}
+						<b>
+							[{getStockName(stockInfo?.type)}] {myStockInfo?.name} - 개당:{' '}
+							{setComma(stockInfo?.value ?? 0, true)}원 / 배당:
+							{stockInfo?.dividend ?? 0 * 100}%{' '}
+						</b>{' '}
 						<i
 							style={{ cursor: 'pointer' }}
-							onClick={() => console.log('refresh')}
-							className="nc-icon nc-refresh-02"
+							onClick={() => fetchData(myStockInfo?.name)}
+							className={`nc-icon nc-refresh-02 ${isLoadingInfo && 'fa-spin'}`}
 						></i>
 						<br />
-						<small>내용내용내용내용내용</small>
+						<small>{stockInfo?.comment}</small>
 					</Modal.Title>
 				</Modal.Header>
 				<Modal.Body className="show-grid">
@@ -104,18 +130,18 @@ function MyVerticallyCenteredModal({ onHide, show }) {
 								<th className="border-0">현재 가격</th>
 								<th className="border-0">보유 갯수</th>
 								<th className="border-0">보유 비중</th>
-								<th className="border-0">매수/매도</th>
 							</tr>
 						</thead>
 						<tbody>
 							<tr>
 								<td>1</td>
-								<td>[주식]무야호</td>
-								<td>$1,336,738/-33.33%</td>
-								<td>1,336,738/-33.33%</td>
-								<td>10개</td>
-								<td>1</td>
-								<td>1</td>
+								<td>
+									[{getStockName(stockInfo?.type)}]{myStockInfo?.name}
+								</td>
+								<td>{setComma(myStockInfo?.myValue ?? 0, true)}원</td>
+								<td>{setComma(stockInfo?.value ?? 0, true)}원</td>
+								<td>{setComma(myStockInfo?.cnt ?? 0)}개</td>
+								<td>{myStockInfo?.holdingRatio}%</td>
 							</tr>
 						</tbody>
 					</Table>
@@ -140,6 +166,7 @@ function MyVerticallyCenteredModal({ onHide, show }) {
 MyVerticallyCenteredModal.propTypes = {
 	onHide: PropTypes.func.isRequired,
 	show: PropTypes.bool.isRequired,
+	myStockInfo: PropTypes.object.isRequired,
 };
 
 export default MyVerticallyCenteredModal;

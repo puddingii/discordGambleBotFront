@@ -9,12 +9,20 @@ import { setComma } from 'util/util';
 
 function TableList() {
 	const [modalShow, setModalShow] = React.useState(false);
-	const { data: stockList } = useGetUserStockListQuery();
-	console.log(stockList);
+	const [modalStockInfo, setModalStockInfo] = React.useState({});
+
+	const { data } = useGetUserStockListQuery();
+	const stockList = data?.stockList ?? [];
 	return (
 		<>
 			<Container fluid>
-				<MyVerticallyCenteredModal show={modalShow} onHide={() => setModalShow(false)} />
+				<MyVerticallyCenteredModal
+					show={modalShow}
+					onHide={() => {
+						setModalShow(false);
+					}}
+					myStockInfo={modalStockInfo}
+				/>
 				<Row>
 					<Col md="12">
 						<Card className="strpied-tabled-with-hover">
@@ -29,8 +37,9 @@ function TableList() {
 											<th className="border-0">ID</th>
 											<th className="border-0">이름</th>
 											<th className="border-0">내 포지션</th>
-											<th className="border-0">현재 가격</th>
+											<th className="border-0">현재 가격/최근 등락률</th>
 											<th className="border-0">보유 갯수</th>
+											<th className="border-0">손익 계산</th>
 											<th className="border-0">보유 비중</th>
 											<th className="border-0">매수/매도</th>
 										</tr>
@@ -39,24 +48,34 @@ function TableList() {
 										return (
 											<tbody key={key}>
 												<tr>
-													<td>1</td>
+													<td>{key + 1}</td>
 													<td>
-														[{getStockName(myStock.stock.type)}]{myStock.stock.name}
+														[{getStockName(myStock.stockType)}]{myStock.name}
 													</td>
-													<td>{setComma(myStock.value, true)}원/-33.33%</td>
-													<td>{setComma(myStock.stock.value, true)}원/-33.33%</td>
-													<td>10개</td>
+													<td>
+														{setComma(myStock.myValue, true)}원/
+														{setComma(myStock.myRatio)}%
+													</td>
+													<td>
+														{setComma(myStock.stockValue, true)}원/
+														{myStock.stockBeforeRatio}%
+													</td>
+													<td>{setComma(myStock.cnt, true)}개</td>
+													<td>{setComma(myStock.profilMargin, true)}원</td>
 													<td>
 														<ProgressBar
 															striped
 															variant="success"
-															label={'40%'}
-															now={40}
+															label={`${myStock.holdingRatio}%`}
+															now={myStock.holdingRatio}
 														/>
 													</td>
 													<td>
 														<Button
-															onClick={() => setModalShow(true)}
+															onClick={() => {
+																setModalStockInfo(myStock);
+																setModalShow(true);
+															}}
 															variant="danger"
 															size="sm"
 														>
