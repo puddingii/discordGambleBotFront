@@ -48,7 +48,7 @@ function Sidebar({ color, image, routes }) {
 						</div>
 					</a>
 					<a className="simple-text" href="https://github.com/puddingii">
-						디 코 봇
+						나만의 작은 게임봇
 					</a>
 				</div>
 				<Nav>

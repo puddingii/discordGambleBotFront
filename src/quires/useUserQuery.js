@@ -23,4 +23,4 @@ export const useGetUserStockListQuery = () => {
 	return useQuery(QUERY_KEY.myStockList, getMyStockList, { refetchOnWindowFocus: false });
 };
 
-export default { useGetUserQuery, getMyStockList };
+export default { useGetUserQuery, useGetUserStockListQuery };
