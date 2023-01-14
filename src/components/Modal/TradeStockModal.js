@@ -1,22 +1,68 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useRef } from 'react';
 import { Modal, Button, Form, Container, Row, Col, Table } from 'react-bootstrap';
 import PropTypes from 'prop-types';
 import { useForm } from 'react-hook-form';
+import NotificationAlert from 'react-notification-alert';
 
 import axios from 'axios';
 import { getStockName } from 'util/stock';
 import { setComma } from '../../util/util';
 
-function MyVerticallyCenteredModal({ onHide, show, myStockInfo }) {
+function MyVerticallyCenteredModal({ onHide, show, myStockInfo, dataRefresh }) {
 	const {
 		register,
 		handleSubmit,
 		formState: { errors },
 		getValues,
+		setValue,
 	} = useForm();
 	const [totalMoney, setTotalMoney] = useState(0);
 	const [stockInfo, setStockInfo] = useState({});
 	const [isLoadingInfo, setLoadingInfo] = useState(false);
+	const [isUpdate, setIsUpdate] = useState(false);
+	const myValueRef = useRef(null);
+	const myCntRef = useRef(null);
+	const notificationAlertRef = useRef(null);
+	const notify = (colorType, message) => {
+		let type;
+		switch (colorType) {
+			case 1:
+				type = 'primary';
+				break;
+			case 2:
+				type = 'success';
+				break;
+			case 3:
+				type = 'danger';
+				break;
+			case 4:
+				type = 'warning';
+				break;
+			case 5:
+				type = 'info';
+				break;
+			default:
+				break;
+		}
+		const options = {
+			place: 'tr',
+			message: (
+				<div>
+					<div>{message}</div>
+				</div>
+			),
+			type,
+			icon: 'nc-icon nc-bell-55',
+			autoDismiss: 7,
+		};
+		notificationAlertRef.current.notificationAlert(options);
+	};
+
+	const initFormData = () => {
+		setValue('type', 'b');
+		setValue('cnt', 1);
+		setTotalMoney(Math.floor(stockInfo?.value));
+	};
 
 	const fetchData = async name => {
 		setLoadingInfo(true);
@@ -34,26 +80,56 @@ function MyVerticallyCenteredModal({ onHide, show, myStockInfo }) {
 			fetchData(myStockInfo.name);
 		}
 	}, [myStockInfo]);
-	const onSubmit = data => {
-		console.log(data);
-		onHide();
+	const onSubmit = async data => {
+		try {
+			setLoadingInfo(true);
+			const { data: result } = await axios.patch(
+				`${process.env.REACT_APP_BACK_API}/api/user/stock`,
+				{ ...data, stockName: myStockInfo.name },
+				{
+					withCredentials: true,
+				},
+			);
+			notify(1, '주문 성공!');
+			setIsUpdate(true);
+
+			myCntRef.current.innerText = `${setComma(result.cnt)}개`;
+			myValueRef.current.innerText = `${setComma(result.value)}원`;
+			initFormData();
+		} catch (e) {
+			let message = '처리에러...';
+			if (e.response) {
+				message = e.response?.data?.message ?? '처리에러...';
+			}
+			notify(3, message);
+		} finally {
+			setLoadingInfo(false);
+		}
 	};
 	const calcTotalMoney = () => {
 		const type = getValues('type');
 		const cnt = getValues('cnt');
 
-		setTotalMoney(
-			Math.floor(cnt * (stockInfo?.value ?? 0) * (type === 'sell' ? 0.97 : 1)),
-		);
+		setTotalMoney(Math.floor(cnt * (stockInfo?.value ?? 0) * (type === 's' ? 0.97 : 1)));
+	};
+
+	const onCloseModal = () => {
+		if (isUpdate) {
+			dataRefresh();
+		}
+		setIsUpdate(false);
+		initFormData();
+		onHide();
 	};
 
 	return (
 		<Modal
 			show={show && myStockInfo?.name}
-			onHide={onHide}
+			onHide={onCloseModal}
 			size="lg"
 			aria-labelledby="example-modal-sizes-title-lg"
 		>
+			<NotificationAlert ref={notificationAlertRef} />
 			<Form onSubmit={handleSubmit(onSubmit)}>
 				<Modal.Header id="example-modal-sizes-title-lg">
 					<Modal.Title>
@@ -81,12 +157,12 @@ function MyVerticallyCenteredModal({ onHide, show, myStockInfo }) {
 									<Form.Select
 										style={{ height: 38 }}
 										{...register('type', {
-											value: 'buy',
+											value: 'b',
 											onChange: calcTotalMoney,
 										})}
 									>
-										<option value="buy">매수</option>
-										<option value="sell">매도</option>
+										<option value="b">매수</option>
+										<option value="s">매도</option>
 									</Form.Select>
 								</Form.Group>
 							</Col>
@@ -101,7 +177,6 @@ function MyVerticallyCenteredModal({ onHide, show, myStockInfo }) {
 											onChange: calcTotalMoney,
 											min: 1,
 										})}
-										min={1}
 									></Form.Control>
 									<Form.Control.Feedback type="invalid">
 										<p>0 이하의 갯수는 입력할 수 없습니다.</p>
@@ -129,7 +204,6 @@ function MyVerticallyCenteredModal({ onHide, show, myStockInfo }) {
 								<th className="border-0">내 포지션</th>
 								<th className="border-0">현재 가격</th>
 								<th className="border-0">보유 갯수</th>
-								<th className="border-0">보유 비중</th>
 							</tr>
 						</thead>
 						<tbody>
@@ -138,22 +212,15 @@ function MyVerticallyCenteredModal({ onHide, show, myStockInfo }) {
 								<td>
 									[{getStockName(stockInfo?.type)}]{myStockInfo?.name}
 								</td>
-								<td>{setComma(myStockInfo?.myValue ?? 0, true)}원</td>
+								<td ref={myValueRef}>{setComma(myStockInfo?.myValue ?? 0, true)}원</td>
 								<td>{setComma(stockInfo?.value ?? 0, true)}원</td>
-								<td>{setComma(myStockInfo?.cnt ?? 0)}개</td>
-								<td>{myStockInfo?.holdingRatio}%</td>
+								<td ref={myCntRef}>{setComma(myStockInfo?.cnt ?? 0)}개</td>
 							</tr>
 						</tbody>
 					</Table>
 				</Modal.Body>
 				<Modal.Footer>
-					<Button
-						onClick={() => {
-							onHide();
-						}}
-					>
-						닫기
-					</Button>
+					<Button onClick={() => onCloseModal}>닫기</Button>
 					<Button variant="secondary" type="submit">
 						매수/매도
 					</Button>
@@ -167,6 +234,7 @@ MyVerticallyCenteredModal.propTypes = {
 	onHide: PropTypes.func.isRequired,
 	show: PropTypes.bool.isRequired,
 	myStockInfo: PropTypes.object.isRequired,
+	dataRefresh: PropTypes.func.isRequired,
 };
 
 export default MyVerticallyCenteredModal;
