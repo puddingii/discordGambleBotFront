@@ -36,6 +36,7 @@ function TableList() {
 	const totalCurrentValue = data?.totalCurrentValue ?? 0;
 	const totalAvgValue = data?.totalAvgValue ?? 0;
 	const totalProfitValue = totalCurrentValue - totalAvgValue;
+	const totalMyMoney = data?.totalMyMoney ?? 0;
 	return (
 		<>
 			<Container fluid>
@@ -45,6 +46,7 @@ function TableList() {
 						setModalShow(false);
 					}}
 					myStockInfo={modalStockInfo}
+					totalMyMoney={totalMyMoney}
 					dataRefresh={stockRefetch}
 				/>
 				<Row>

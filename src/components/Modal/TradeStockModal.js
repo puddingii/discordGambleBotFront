@@ -8,7 +8,13 @@ import axios from 'axios';
 import { getStockName } from 'util/stock';
 import { setComma } from '../../util/util';
 
-function MyVerticallyCenteredModal({ onHide, show, myStockInfo, dataRefresh }) {
+function MyVerticallyCenteredModal({
+	onHide,
+	show,
+	myStockInfo,
+	dataRefresh,
+	totalMyMoney,
+}) {
 	const {
 		register,
 		handleSubmit,
@@ -131,11 +137,10 @@ function MyVerticallyCenteredModal({ onHide, show, myStockInfo, dataRefresh }) {
 		>
 			<NotificationAlert ref={notificationAlertRef} />
 			<Form onSubmit={handleSubmit(onSubmit)}>
-				<Modal.Header id="example-modal-sizes-title-lg">
+				<Modal.Header id="example-modal-sizes-title-lg" style={{ paddingTop: '0px' }}>
 					<Modal.Title>
 						<b>
-							[{getStockName(stockInfo?.type)}] {myStockInfo?.name} - 개당:{' '}
-							{setComma(stockInfo?.value ?? 0, true)}원 / 배당:
+							[{getStockName(stockInfo?.type)}] {myStockInfo?.name} - 배당:
 							{stockInfo?.dividend ?? 0 * 100}%{' '}
 						</b>{' '}
 						<i
@@ -147,7 +152,7 @@ function MyVerticallyCenteredModal({ onHide, show, myStockInfo, dataRefresh }) {
 						<small>{stockInfo?.comment}</small>
 					</Modal.Title>
 				</Modal.Header>
-				<Modal.Body className="show-grid">
+				<Modal.Body className="show-grid" style={{ paddingTop: '12px' }}>
 					<Container>
 						<Row>
 							<Col xs={6} md={2}>
@@ -218,6 +223,30 @@ function MyVerticallyCenteredModal({ onHide, show, myStockInfo, dataRefresh }) {
 							</tr>
 						</tbody>
 					</Table>
+					<hr />
+					<Container>
+						<Row>
+							<Col className="text-center" xs={12} md={3}>
+								{setComma(totalMyMoney, true)} 원
+							</Col>
+							<Col className="text-center" xs={12} md={1}>
+								{getValues('type') === 's' ? '+' : '-'}
+							</Col>
+							<Col className="text-center" xs={12} md={3}>
+								{setComma(totalMoney, true)} 원
+							</Col>
+							<Col className="text-center" xs={12} md={1}>
+								=
+							</Col>
+							<Col className="text-center" xs={12} md={4}>
+								{setComma(
+									totalMyMoney + totalMoney * (getValues('type') === 's' ? 1 : -1),
+									true,
+								)}{' '}
+								원
+							</Col>
+						</Row>
+					</Container>
 				</Modal.Body>
 				<Modal.Footer>
 					<Button onClick={onCloseModal}>닫기</Button>
@@ -235,6 +264,7 @@ MyVerticallyCenteredModal.propTypes = {
 	show: PropTypes.bool.isRequired,
 	myStockInfo: PropTypes.object.isRequired,
 	dataRefresh: PropTypes.func.isRequired,
+	totalMyMoney: PropTypes.number.isRequired,
 };
 
 export default MyVerticallyCenteredModal;
