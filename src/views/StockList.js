@@ -16,6 +16,17 @@ const getNumberColor = num => {
 	return num < 0 ? { color: 'blue' } : { color: 'red' };
 };
 
+const getProgressColor = num => {
+	switch (Math.floor(num / 33)) {
+		case 0:
+			return 'warning';
+		case 1:
+			return 'success';
+		default:
+			return 'danger';
+	}
+};
+
 function TableList() {
 	const [modalShow, setModalShow] = useState(false);
 	const [modalStockInfo, setModalStockInfo] = useState({});
@@ -44,7 +55,7 @@ function TableList() {
 									주식 리스트{' '}
 									<i
 										style={{ cursor: 'pointer' }}
-										onClick={() => stockRefetch()}
+										onClick={stockRefetch}
 										className={`nc-icon nc-refresh-02 ${
 											status !== 'success' && 'fa-spin'
 										}`}
@@ -56,9 +67,7 @@ function TableList() {
 								<Table className="table-hover table-striped">
 									<thead>
 										<tr>
-											<th className="border-0" onClick={() => useGetUserStockListQuery}>
-												ID
-											</th>
+											<th className="border-0">ID</th>
 											<th className="border-0">이름</th>
 											<th className="border-0">내 포지션</th>
 											<th className="border-0">현재 가격/최근 등락률</th>
@@ -97,7 +106,7 @@ function TableList() {
 													<td>
 														<ProgressBar
 															striped
-															variant="success"
+															variant={getProgressColor(myStock.holdingRatio)}
 															label={`${myStock.holdingRatio}%`}
 															now={myStock.holdingRatio}
 														/>

@@ -220,7 +220,7 @@ function MyVerticallyCenteredModal({ onHide, show, myStockInfo, dataRefresh }) {
 					</Table>
 				</Modal.Body>
 				<Modal.Footer>
-					<Button onClick={() => onCloseModal}>닫기</Button>
+					<Button onClick={onCloseModal}>닫기</Button>
 					<Button variant="secondary" type="submit">
 						매수/매도
 					</Button>
