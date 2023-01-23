@@ -1,17 +1,16 @@
 import React, { useEffect, useState, useRef } from 'react';
-import { Modal, Button, Form, Container, Row, Col, Table } from 'react-bootstrap';
+import { Modal, Button, Form, Container, Row, Col } from 'react-bootstrap';
 import PropTypes from 'prop-types';
 import { useForm } from 'react-hook-form';
 import NotificationAlert from 'react-notification-alert';
 
 import axios from 'axios';
-import { getStockName } from 'util/stock';
 import { setComma } from '../../util/util';
 
 function MyVerticallyCenteredModal({
 	onHide,
 	show,
-	myStockInfo,
+	myNickname,
 	dataRefresh,
 	totalMyMoney,
 }) {
@@ -19,15 +18,12 @@ function MyVerticallyCenteredModal({
 		register,
 		handleSubmit,
 		formState: { errors },
-		getValues,
 		setValue,
+		watch,
 	} = useForm();
-	const [totalMoney, setTotalMoney] = useState(0);
-	const [stockInfo, setStockInfo] = useState({});
+	const watchMoneyValue = watch('money', false);
+	const [nicknameList, setNicknameList] = useState([]);
 	const [isLoadingInfo, setLoadingInfo] = useState(false);
-	const [isUpdate, setIsUpdate] = useState(false);
-	const myValueRef = useRef(null);
-	const myCntRef = useRef(null);
 	const notificationAlertRef = useRef(null);
 	const notify = (colorType, message) => {
 		let type;
@@ -63,45 +59,42 @@ function MyVerticallyCenteredModal({
 		};
 		notificationAlertRef.current.notificationAlert(options);
 	};
-
 	const initFormData = () => {
-		setValue('type', 'b');
-		setValue('cnt', 1);
-		setTotalMoney(Math.floor(stockInfo?.value));
+		setValue('ptrNickname', '');
+		setValue('money', 1);
 	};
 
-	const fetchData = async name => {
+	const fetchData = async () => {
 		setLoadingInfo(true);
-		const result = await axios.get(`${process.env.REACT_APP_BACK_API}/api/stock`, {
-			withCredentials: true,
-			params: { name },
-		});
+		const result = await axios.get(
+			`${process.env.REACT_APP_BACK_API}/api/user/nicklist`,
+			{
+				withCredentials: true,
+			},
+		);
 		setLoadingInfo(false);
-		setStockInfo(result.data);
-		setTotalMoney(Math.floor(result?.data?.value ?? 0));
+		const nickList = result.data ?? [];
+		setNicknameList(
+			nickList.filter(nickname => {
+				return nickname !== myNickname;
+			}),
+		);
 	};
 
-	useEffect(() => {
-		if (myStockInfo?.name) {
-			fetchData(myStockInfo.name);
-		}
-	}, [myStockInfo]);
 	const onSubmit = async data => {
 		try {
 			setLoadingInfo(true);
-			const { data: result } = await axios.patch(
-				`${process.env.REACT_APP_BACK_API}/api/user/stock`,
-				{ ...data, stockName: myStockInfo.name },
+			await axios.patch(
+				`${process.env.REACT_APP_BACK_API}/api/user/give/money`,
+				{ ...data, myNickname },
 				{
 					withCredentials: true,
 				},
 			);
-			notify(1, '주문 성공!');
-			setIsUpdate(true);
+			notify(1, '기부성공!');
 
-			myCntRef.current.innerText = `${setComma(result.cnt)}개`;
-			myValueRef.current.innerText = `${setComma(result.value)}원`;
 			initFormData();
+			dataRefresh();
 		} catch (e) {
 			let message = '처리에러...';
 			if (e.response) {
@@ -112,25 +105,21 @@ function MyVerticallyCenteredModal({
 			setLoadingInfo(false);
 		}
 	};
-	const calcTotalMoney = () => {
-		const type = getValues('type');
-		const cnt = getValues('cnt');
-
-		setTotalMoney(Math.floor(cnt * (stockInfo?.value ?? 0) * (type === 's' ? 0.97 : 1)));
-	};
 
 	const onCloseModal = () => {
-		if (isUpdate) {
-			dataRefresh();
-		}
-		setIsUpdate(false);
 		initFormData();
 		onHide();
 	};
 
+	useEffect(() => {
+		if (show) {
+			fetchData();
+		}
+	}, [show]);
+
 	return (
 		<Modal
-			show={show && myStockInfo?.name}
+			show={show}
 			onHide={onCloseModal}
 			size="lg"
 			aria-labelledby="example-modal-sizes-title-lg"
@@ -139,47 +128,45 @@ function MyVerticallyCenteredModal({
 			<Form onSubmit={handleSubmit(onSubmit)}>
 				<Modal.Header id="example-modal-sizes-title-lg" style={{ paddingTop: '0px' }}>
 					<Modal.Title>
-						<b>
-							[{getStockName(stockInfo?.type)}] {myStockInfo?.name} - 배당:
-							{stockInfo?.dividend ?? 0 * 100}%{' '}
-						</b>{' '}
+						<b>기부하기</b>{' '}
 						<i
-							style={{ cursor: 'pointer' }}
-							onClick={() => fetchData(myStockInfo?.name)}
+							style={{ cursor: 'pointer', display: isLoadingInfo ? '' : 'none' }}
 							className={`nc-icon nc-refresh-02 ${isLoadingInfo && 'fa-spin'}`}
 						></i>
-						<br />
-						<small>{stockInfo?.comment}</small>
 					</Modal.Title>
 				</Modal.Header>
 				<Modal.Body className="show-grid" style={{ paddingTop: '12px' }}>
 					<Container>
 						<Row>
-							<Col xs={6} md={2}>
+							<Col xs={6} md={3}>
 								<Form.Group className="mb-3">
-									<label>매수 / 매도</label>
+									<label>닉네임</label>
 									<br></br>
 									<Form.Select
 										style={{ height: 38 }}
-										{...register('type', {
-											value: 'b',
-											onChange: calcTotalMoney,
+										{...register('ptrNickname', {
+											value: '',
 										})}
 									>
-										<option value="b">매수</option>
-										<option value="s">매도</option>
+										<option value="">선택</option>
+										{nicknameList.map((nickname, key) => {
+											return (
+												<option key={key} value={nickname}>
+													{nickname}
+												</option>
+											);
+										})}
 									</Form.Select>
 								</Form.Group>
 							</Col>
-							<Col xs={12} md={3}>
+							<Col xs={12} md={6}>
 								<Form.Group>
-									<label>갯수</label>
+									<label>액수</label>
 									<Form.Control
 										defaultValue="1"
 										type="number"
-										isInvalid={errors.cnt}
-										{...register('cnt', {
-											onChange: calcTotalMoney,
+										isInvalid={errors.money}
+										{...register('money', {
 											min: 1,
 											valueAsNumber: true,
 										})}
@@ -189,41 +176,8 @@ function MyVerticallyCenteredModal({
 									</Form.Control.Feedback>
 								</Form.Group>
 							</Col>
-							<Col xs={6} md={7}>
-								<Form.Group>
-									<label>들어오는/나가는 금액(추정치)</label>
-									<Form.Control
-										value={`대략 ${setComma(totalMoney)}원`}
-										placeholder="들어오는/나가는 금액"
-										disabled
-										type="text"
-									></Form.Control>
-								</Form.Group>
-							</Col>
 						</Row>
 					</Container>
-					<Table className="table-hover table-striped">
-						<thead>
-							<tr>
-								<th className="border-0">ID</th>
-								<th className="border-0">이름</th>
-								<th className="border-0">내 포지션</th>
-								<th className="border-0">현재 가격</th>
-								<th className="border-0">보유 갯수</th>
-							</tr>
-						</thead>
-						<tbody>
-							<tr>
-								<td>1</td>
-								<td>
-									[{getStockName(stockInfo?.type)}]{myStockInfo?.name}
-								</td>
-								<td ref={myValueRef}>{setComma(myStockInfo?.myValue ?? 0, true)}원</td>
-								<td>{setComma(stockInfo?.value ?? 0, true)}원</td>
-								<td ref={myCntRef}>{setComma(myStockInfo?.cnt ?? 0)}개</td>
-							</tr>
-						</tbody>
-					</Table>
 					<hr />
 					<Container>
 						<Row>
@@ -231,20 +185,16 @@ function MyVerticallyCenteredModal({
 								{setComma(totalMyMoney, true)} 원
 							</Col>
 							<Col className="text-center" xs={12} md={1}>
-								{getValues('type') === 's' ? '+' : '-'}
+								-
 							</Col>
 							<Col className="text-center" xs={12} md={3}>
-								{setComma(totalMoney, true)} 원
+								{setComma(watchMoneyValue, true)} 원
 							</Col>
 							<Col className="text-center" xs={12} md={1}>
 								=
 							</Col>
 							<Col className="text-center" xs={12} md={4}>
-								{setComma(
-									totalMyMoney + totalMoney * (getValues('type') === 's' ? 1 : -1),
-									true,
-								)}{' '}
-								원
+								{setComma(totalMyMoney - watchMoneyValue, true)} 원
 							</Col>
 						</Row>
 					</Container>
@@ -252,7 +202,7 @@ function MyVerticallyCenteredModal({
 				<Modal.Footer>
 					<Button onClick={onCloseModal}>닫기</Button>
 					<Button variant="secondary" type="submit">
-						매수/매도
+						기부하기
 					</Button>
 				</Modal.Footer>
 			</Form>
@@ -263,7 +213,7 @@ function MyVerticallyCenteredModal({
 MyVerticallyCenteredModal.propTypes = {
 	onHide: PropTypes.func.isRequired,
 	show: PropTypes.bool.isRequired,
-	myStockInfo: PropTypes.object.isRequired,
+	myNickname: PropTypes.string.isRequired,
 	dataRefresh: PropTypes.func.isRequired,
 	totalMyMoney: PropTypes.number.isRequired,
 };

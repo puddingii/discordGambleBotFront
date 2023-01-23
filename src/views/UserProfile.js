@@ -1,20 +1,32 @@
+import MyVerticallyCenteredModal from 'components/Modal/GiveMoneyModal';
 import { useGetUserInfoQuery } from 'quires/useUserQuery';
-import React from 'react';
+import React, { useRef, useState } from 'react';
 
 // react-bootstrap components
 import { Button, Card, Form, Container, Row, Col } from 'react-bootstrap';
 import { setComma } from 'util/util';
 
 function User() {
-	const { data } = useGetUserInfoQuery();
+	const [modalShow, setModalShow] = useState(false);
+	const myMoneyRef = useRef(null);
+	const { data, refetch: userRefetch } = useGetUserInfoQuery();
 
 	const nickname = data?.nickname ?? '';
 	const totalStockValue = data?.totalStockValue ?? 0;
-	const myMoney = data?.myMoney ?? 0;
 	const grantMoney = data?.grantMoney ?? 0;
+	const myMoney = data?.myMoney ?? 0;
 	return (
 		<>
 			<Container fluid>
+				<MyVerticallyCenteredModal
+					show={modalShow}
+					onHide={() => {
+						setModalShow(false);
+					}}
+					myNickname={nickname}
+					totalMyMoney={myMoney}
+					dataRefresh={userRefetch}
+				/>
 				<Row>
 					<Col md="8">
 						<Card>
@@ -24,7 +36,7 @@ function User() {
 							<Card.Body>
 								<Form>
 									<Row>
-										<Col className="pr-1" md="5">
+										<Col className="pr-1" md="3">
 											<Form.Group>
 												<label>유저타입</label>
 												<Form.Control
@@ -35,7 +47,7 @@ function User() {
 												></Form.Control>
 											</Form.Group>
 										</Col>
-										<Col className="px-1" md="7">
+										<Col className="px-1" md="9">
 											<Form.Group>
 												<label>닉네임</label>
 												<Form.Control
@@ -52,6 +64,7 @@ function User() {
 											<Form.Group>
 												<label>보유 캐쉬</label>
 												<Form.Control
+													ref={myMoneyRef}
 													value={`${setComma(myMoney, true)}원`}
 													placeholder="보유 캐쉬"
 													type="text"
@@ -83,19 +96,7 @@ function User() {
 										</Col>
 									</Row>
 									<Row>
-										<Col className="pr-1" md="3">
-											<Form.Group>
-												<label>재산 랭킹</label>
-												<Form.Control
-													value={`$1 등`}
-													placeholder="랭킹"
-													type="text"
-													disabled
-												></Form.Control>
-											</Form.Group>
-										</Col>
-
-										<Col className="px-1" md="6">
+										<Col className="pr-1" md="6">
 											<Form.Group>
 												<label>보조금 통장(공유통장)</label>
 												<Form.Control
@@ -106,7 +107,7 @@ function User() {
 												></Form.Control>
 											</Form.Group>
 										</Col>
-										<Col className="pr-1" md="3">
+										<Col className="px-1" md="3">
 											<Form.Group>
 												<label> - </label>
 												<Form.Control
@@ -119,8 +120,26 @@ function User() {
 										</Col>
 									</Row>
 									<hr />
-									<Button className="btn-fill pull-right" variant="primary">
+									<Button
+										className="btn-fill pull-right"
+										variant="primary"
+										onClick={() => {
+											setModalShow(true);
+										}}
+									>
 										돈 기부하기
+									</Button>{' '}
+									<Button
+										className="btn-fill pull-right"
+										variant="info"
+										onClick={() => {
+											location.href = '/admin/stock';
+										}}
+									>
+										주식관리
+									</Button>{' '}
+									<Button className="btn-fill pull-right" variant="info">
+										무기관리
 									</Button>{' '}
 									<Button className="btn-fill pull-right" variant="danger">
 										탈퇴
