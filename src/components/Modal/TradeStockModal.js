@@ -25,7 +25,6 @@ function MyVerticallyCenteredModal({
 	const [totalMoney, setTotalMoney] = useState(0);
 	const [stockInfo, setStockInfo] = useState({});
 	const [isLoadingInfo, setLoadingInfo] = useState(false);
-	const [isUpdate, setIsUpdate] = useState(false);
 	const myValueRef = useRef(null);
 	const myCntRef = useRef(null);
 	const notificationAlertRef = useRef(null);
@@ -97,11 +96,11 @@ function MyVerticallyCenteredModal({
 				},
 			);
 			notify(1, '주문 성공!');
-			setIsUpdate(true);
 
 			myCntRef.current.innerText = `${setComma(result.cnt)}개`;
 			myValueRef.current.innerText = `${setComma(result.value)}원`;
 			initFormData();
+			dataRefresh();
 		} catch (e) {
 			let message = '처리에러...';
 			if (e.response) {
@@ -120,10 +119,6 @@ function MyVerticallyCenteredModal({
 	};
 
 	const onCloseModal = () => {
-		if (isUpdate) {
-			dataRefresh();
-		}
-		setIsUpdate(false);
 		initFormData();
 		onHide();
 	};
