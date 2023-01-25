@@ -1,15 +1,53 @@
+import axios from 'axios';
 import MyVerticallyCenteredModal from 'components/Modal/GiveMoneyModal';
 import { useGetUserInfoQuery } from 'quires/useUserQuery';
+import PropTypes from 'prop-types';
 import React, { useRef, useState } from 'react';
 
 // react-bootstrap components
 import { Button, Card, Form, Container, Row, Col } from 'react-bootstrap';
 import { setComma } from 'util/util';
 
+function GrantMoneyLabel({ isLoadingInfo, isFail }) {
+	if (isFail) {
+		return (
+			<label>
+				<i className="nc-icon nc-simple-remove"></i>
+			</label>
+		);
+	}
+	if (isLoadingInfo) {
+		return (
+			<label>
+				<i className="nc-icon nc-refresh-02 fa-spin"></i>
+			</label>
+		);
+	}
+	return <label>-</label>;
+}
+
 function User() {
 	const [modalShow, setModalShow] = useState(false);
+	const [isLoadingInfo, setLoadingInfo] = useState(false);
+	const [isFail, setIsFail] = useState(false);
 	const myMoneyRef = useRef(null);
 	const { data, refetch: userRefetch } = useGetUserInfoQuery();
+
+	const getGrantMoney = async () => {
+		try {
+			setIsFail(false);
+			setLoadingInfo(true);
+			await axios.patch(`${process.env.REACT_APP_BACK_API}/api/user/grantmoney`, null, {
+				withCredentials: true,
+			});
+
+			userRefetch();
+		} catch (e) {
+			setIsFail(true);
+		} finally {
+			setLoadingInfo(false);
+		}
+	};
 
 	const nickname = data?.nickname ?? '';
 	const totalStockValue = data?.totalStockValue ?? 0;
@@ -109,12 +147,16 @@ function User() {
 										</Col>
 										<Col className="px-1" md="3">
 											<Form.Group>
-												<label> - </label>
+												<GrantMoneyLabel
+													isLoadingInfo={isLoadingInfo}
+													isFail={isFail}
+												></GrantMoneyLabel>
 												<Form.Control
 													className="btn-primary"
 													defaultValue="보조금 받기"
 													placeholder="받기"
 													type="button"
+													onClick={getGrantMoney}
 												></Form.Control>
 											</Form.Group>
 										</Col>
@@ -174,5 +216,10 @@ function User() {
 		</>
 	);
 }
+
+GrantMoneyLabel.propTypes = {
+	isLoadingInfo: PropTypes.bool.isRequired,
+	isFail: PropTypes.bool.isRequired,
+};
 
 export default User;

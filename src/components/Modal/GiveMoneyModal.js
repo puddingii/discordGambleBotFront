@@ -130,8 +130,8 @@ function MyVerticallyCenteredModal({
 					<Modal.Title>
 						<b>기부하기</b>{' '}
 						<i
-							style={{ cursor: 'pointer', display: isLoadingInfo ? '' : 'none' }}
-							className={`nc-icon nc-refresh-02 ${isLoadingInfo && 'fa-spin'}`}
+							style={{ display: isLoadingInfo ? '' : 'none' }}
+							className="nc-icon nc-refresh-02 fa-spin"
 						></i>
 					</Modal.Title>
 				</Modal.Header>
