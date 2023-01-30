@@ -21,8 +21,8 @@ import StockList from 'views/StockList.js';
 import Typography from 'views/Typography.js';
 import Icons from 'views/Icons.js';
 import Notifications from 'views/Notifications.js';
-import Upgrade from 'views/Upgrade.js';
 import Login from 'views/Login.js';
+import Weapon from 'views/Weapon.js';
 
 const dashboardRoutes = [
 	// {
@@ -55,6 +55,14 @@ const dashboardRoutes = [
 		name: '주식정보',
 		icon: 'nc-icon nc-notes',
 		component: StockList,
+		layout: '/admin',
+		isLoginRequired: true,
+	},
+	{
+		path: '/weapon',
+		name: '무기강화',
+		icon: 'nc-icon nc-settings-90',
+		component: Weapon,
 		layout: '/admin',
 		isLoginRequired: true,
 	},
