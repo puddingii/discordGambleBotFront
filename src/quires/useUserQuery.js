@@ -6,6 +6,7 @@ import { useQuery } from 'react-query';
 export const QUERY_KEY = {
 	get: `${process.env.REACT_APP_BACK_API}/api/user`,
 	myStockList: `${process.env.REACT_APP_BACK_API}/api/user/stocklist`,
+	myWeaponList: `${process.env.REACT_APP_BACK_API}/api/user/weaponlist`,
 	myStock: `${process.env.REACT_APP_BACK_API}/api/user/stock?`,
 	updateStock: `${process.env.REACT_APP_BACK_API}/api/user/stock?`,
 };
@@ -23,4 +24,16 @@ export const useGetUserStockListQuery = () => {
 	return useQuery(QUERY_KEY.myStockList, getMyStockList, { refetchOnWindowFocus: false });
 };
 
-export default { useGetUserInfoQuery, useGetUserStockListQuery };
+const getMyWeaponList = () =>
+	axios.get(QUERY_KEY.myWeaponList, { withCredentials: true }).then(({ data }) => data);
+export const useGetUserWeaponListQuery = () => {
+	return useQuery(QUERY_KEY.myWeaponList, getMyWeaponList, {
+		refetchOnWindowFocus: false,
+	});
+};
+
+export default {
+	useGetUserInfoQuery,
+	useGetUserStockListQuery,
+	useGetUserWeaponListQuery,
+};
