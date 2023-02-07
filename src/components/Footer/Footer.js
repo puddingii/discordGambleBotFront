@@ -15,24 +15,22 @@
 * The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
 
 */
-import React, { Component } from 'react';
+import React from 'react';
 import { Container } from 'react-bootstrap';
 
-class Footer extends Component {
-	render() {
-		return (
-			<footer className="footer px-0 px-lg-3">
-				<Container fluid>
-					<nav>
-						<p className="copyright text-center">
-							© {new Date().getFullYear()}{' '}
-							<a href="https://github.com/puddingii">응애건영</a>...프론트 어려웡
-						</p>
-					</nav>
-				</Container>
-			</footer>
-		);
-	}
+function Footer() {
+	return (
+		<footer className="footer px-0 px-lg-3">
+			<Container fluid>
+				<nav>
+					<p className="copyright text-center">
+						© {new Date().getFullYear()}{' '}
+						<a href="https://github.com/puddingii">응애건영</a>...프론트 어려웡
+					</p>
+				</nav>
+			</Container>
+		</footer>
+	);
 }
 
 export default Footer;
