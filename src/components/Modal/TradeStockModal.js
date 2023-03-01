@@ -8,6 +8,10 @@ import axios from 'axios';
 import { getStockName } from 'util/stock';
 import { setComma } from '../../util/util';
 
+const getNumberColor = num => {
+	return num < 0 ? { color: 'blue' } : { color: 'red' };
+};
+
 function MyVerticallyCenteredModal({
 	onHide,
 	show,
@@ -70,6 +74,9 @@ function MyVerticallyCenteredModal({
 	};
 
 	const fetchData = async name => {
+		if (isLoadingInfo) {
+			return;
+		}
 		setLoadingInfo(true);
 		const result = await axios.get(`${process.env.REACT_APP_BACK_API}/api/stock`, {
 			withCredentials: true,
@@ -115,7 +122,7 @@ function MyVerticallyCenteredModal({
 		const type = getValues('type');
 		const cnt = getValues('cnt');
 
-		setTotalMoney(Math.floor(cnt * (stockInfo?.value ?? 0) * (type === 's' ? 0.97 : 1)));
+		setTotalMoney(Math.floor(cnt * (stockInfo?.value ?? 0) * (type === 's' ? 0.98 : 1)));
 	};
 
 	const onCloseModal = () => {
@@ -135,8 +142,10 @@ function MyVerticallyCenteredModal({
 				<Modal.Header id="example-modal-sizes-title-lg" style={{ paddingTop: '0px' }}>
 					<Modal.Title>
 						<b>
-							[{getStockName(stockInfo?.type)}] {myStockInfo?.name} - 배당:
-							{stockInfo?.dividend ?? 0 * 100}%{' '}
+							[{getStockName(stockInfo?.type)}] {myStockInfo?.name}{' '}
+							<span style={getNumberColor(Number(stockInfo?.diffRatio))}>
+								{stockInfo?.diffRatio}%
+							</span>
 						</b>{' '}
 						<i
 							style={{ cursor: 'pointer' }}
@@ -144,7 +153,11 @@ function MyVerticallyCenteredModal({
 							className={`nc-icon nc-refresh-02 ${isLoadingInfo && 'fa-spin'}`}
 						></i>
 						<br />
-						<small>{stockInfo?.comment}</small>
+						<small>
+							배당:
+							{stockInfo?.dividend ?? 0 * 100}% <br />
+							{stockInfo?.comment}
+						</small>
 					</Modal.Title>
 				</Modal.Header>
 				<Modal.Body className="show-grid" style={{ paddingTop: '12px' }}>
@@ -246,7 +259,7 @@ function MyVerticallyCenteredModal({
 				</Modal.Body>
 				<Modal.Footer>
 					<Button onClick={onCloseModal}>닫기</Button>
-					<Button variant="secondary" type="submit">
+					<Button disabled={isLoadingInfo} variant="secondary" type="submit">
 						매수/매도
 					</Button>
 				</Modal.Footer>

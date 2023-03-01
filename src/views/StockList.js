@@ -72,7 +72,7 @@ function TableList() {
 											<th className="border-0">ID</th>
 											<th className="border-0">이름</th>
 											<th className="border-0">내 포지션</th>
-											<th className="border-0">현재 가격/최근 등락률</th>
+											<th className="border-0">현재 가격</th>
 											<th className="border-0">손익 계산</th>
 											<th className="border-0">총 매입금액</th>
 											<th className="border-0">총 평가금액</th>
@@ -94,12 +94,7 @@ function TableList() {
 															{setComma(myStock.myRatio)}%
 														</span>
 													</td>
-													<td>
-														{setComma(myStock.stockValue, true)}원/
-														<span style={getNumberColor(myStock.stockBeforeRatio)}>
-															{myStock.stockBeforeRatio}%
-														</span>
-													</td>
+													<td>{setComma(myStock.stockValue, true)}원</td>
 													<td style={getNumberColor(myStock.profilMargin)}>
 														{setComma(myStock.profilMargin, true)}원
 													</td>
