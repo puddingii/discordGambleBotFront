@@ -33,9 +33,9 @@ function TableList() {
 
 	const { data, refetch: stockRefetch, status } = useGetUserStockListQuery();
 	const stockList = data?.stockList ?? [];
-	const totalCurrentValue = data?.totalCurrentValue ?? 0;
-	const totalAvgValue = data?.totalAvgValue ?? 0;
-	const totalProfitValue = totalCurrentValue - totalAvgValue;
+	const totalStockValue = data?.totalStockValue ?? 0;
+	const totalMyValue = data?.totalMyValue ?? 0;
+	const totalProfitValue = totalStockValue - totalMyValue;
 	const totalMyMoney = data?.totalMyMoney ?? 0;
 	return (
 		<>
@@ -133,8 +133,8 @@ function TableList() {
 											<Total style={getNumberColor(totalProfitValue)}>
 												{setComma(totalProfitValue, true)}원
 											</Total>
-											<Total>{setComma(totalAvgValue, true)}원</Total>
-											<Total>{setComma(totalCurrentValue, true)}원</Total>
+											<Total>{setComma(totalMyValue, true)}원</Total>
+											<Total>{setComma(totalStockValue, true)}원</Total>
 											<td></td>
 											<td></td>
 										</tr>
