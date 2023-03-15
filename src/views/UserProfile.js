@@ -37,7 +37,7 @@ function User() {
 		try {
 			setIsFail(false);
 			setLoadingInfo(true);
-			await axios.patch(`${process.env.REACT_APP_BACK_API}/api/user/grantmoney`, null, {
+			await axios.patch(`${process.env.REACT_APP_BACK_API}/user/grantmoney`, null, {
 				withCredentials: true,
 			});
 

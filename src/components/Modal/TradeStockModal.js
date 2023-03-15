@@ -78,7 +78,7 @@ function MyVerticallyCenteredModal({
 			return;
 		}
 		setLoadingInfo(true);
-		const result = await axios.get(`${process.env.REACT_APP_BACK_API}/api/stock`, {
+		const result = await axios.get(`${process.env.REACT_APP_BACK_API}/stock`, {
 			withCredentials: true,
 			params: { name },
 		});
@@ -96,7 +96,7 @@ function MyVerticallyCenteredModal({
 		try {
 			setLoadingInfo(true);
 			const { data: result } = await axios.patch(
-				`${process.env.REACT_APP_BACK_API}/api/user/stock`,
+				`${process.env.REACT_APP_BACK_API}/user/stock`,
 				{ ...data, stockName: myStockInfo.name },
 				{
 					withCredentials: true,

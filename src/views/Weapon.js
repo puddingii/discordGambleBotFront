@@ -76,7 +76,7 @@ function Weapon() {
 											href="#pablo"
 											onClick={async () => {
 												const { data } = await axios.get(
-													`${process.env.REACT_APP_BACK_API}/api/weapon/enhance?type=${weapon.type}`,
+													`${process.env.REACT_APP_BACK_API}/weapon/enhance?type=${weapon.type}`,
 													{
 														withCredentials: true,
 													},
@@ -99,7 +99,7 @@ function Weapon() {
 													preConfirm: async () => {
 														try {
 															const { data } = await axios.patch(
-																`${process.env.REACT_APP_BACK_API}/api/user/weapon`,
+																`${process.env.REACT_APP_BACK_API}/user/weapon`,
 																{ type: weapon.type },
 																{
 																	withCredentials: true,

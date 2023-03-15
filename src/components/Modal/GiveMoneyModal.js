@@ -66,12 +66,9 @@ function MyVerticallyCenteredModal({
 
 	const fetchData = async () => {
 		setLoadingInfo(true);
-		const result = await axios.get(
-			`${process.env.REACT_APP_BACK_API}/api/user/nicklist`,
-			{
-				withCredentials: true,
-			},
-		);
+		const result = await axios.get(`${process.env.REACT_APP_BACK_API}/user/nicklist`, {
+			withCredentials: true,
+		});
 		setLoadingInfo(false);
 		const nickList = result.data ?? [];
 		setNicknameList(
@@ -85,7 +82,7 @@ function MyVerticallyCenteredModal({
 		try {
 			setLoadingInfo(true);
 			await axios.patch(
-				`${process.env.REACT_APP_BACK_API}/api/user/give/money`,
+				`${process.env.REACT_APP_BACK_API}/user/give/money`,
 				{ ...data, myNickname },
 				{
 					withCredentials: true,
