@@ -16,7 +16,7 @@
 
 */
 import React from 'react';
-import { useLocation, Route, Switch } from 'react-router-dom';
+import { useLocation, Route, Switch, Redirect } from 'react-router-dom';
 import { useRecoilValue } from 'recoil';
 import { useIsMutating } from 'react-query';
 
@@ -41,16 +41,44 @@ function Admin() {
 	const mainPanel = React.useRef(null);
 	const getRoutes = routes => {
 		return routes.map((prop, key) => {
-			if (prop.layout === '/admin') {
-				return (
+			if (prop.isLoginRequired) {
+				return prop.isLoginRequired === loginStatus ? (
 					<Route
 						path={prop.layout + prop.path}
 						render={props => <prop.component {...props} />}
 						key={key}
 					/>
+				) : (
+					<Redirect to={'/admin/login'} from={prop.layout + prop.path} key={key} />
 				);
 			}
-			return null;
+			if (prop.isLogoutRequired) {
+				return prop.isLogoutRequired !== loginStatus ? (
+					<Route
+						path={prop.layout + prop.path}
+						render={props => <prop.component {...props} />}
+						key={key}
+					/>
+				) : (
+					<Redirect to={'/admin/dashboard'} from={prop.layout + prop.path} key={key} />
+				);
+			}
+			return (
+				<Route
+					path={prop.layout + prop.path}
+					render={props => <prop.component {...props} />}
+					key={key}
+				/>
+			);
+			// if (prop.layout === '/admin') {
+			// 	return (
+			// 		<Route
+			// 			path={prop.layout + prop.path}
+			// 			render={props => <prop.component {...props} />}
+			// 			key={key}
+			// 		/>
+			// 	);
+			// }
 		});
 	};
 	React.useEffect(() => {
@@ -74,7 +102,7 @@ function Admin() {
 					{loginStatus ? <AdminNavbar /> : null}
 					<div className="content">
 						<Switch>
-							{getRoutes(myRoutes)}
+							{getRoutes(routes)}
 							{isMutating ? (
 								<Spinner animation="border" role="status">
 									<span className="sr-only">Loading...</span>

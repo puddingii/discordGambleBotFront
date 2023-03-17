@@ -97,6 +97,7 @@ const dashboardRoutes = [
 		component: Login,
 		layout: '/admin',
 		isLoginRequired: false,
+		isLogoutRequired: true,
 	},
 ];
 
