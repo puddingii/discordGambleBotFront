@@ -11,6 +11,7 @@ export const QUERY_KEY = {
 	updateStock: `${process.env.REACT_APP_BACK_API}/user/stock?`,
 	userNicknameList: `${process.env.REACT_APP_BACK_API}/user/nicklist?`,
 	giveMoney: `${process.env.REACT_APP_BACK_API}/user/give/money`,
+	getGrantMoney: `${process.env.REACT_APP_BACK_API}/user/grantmoney`,
 };
 
 // useQuery에서 사용할 `서버의 상태를 불러오는데 사용할 Promise를 반환하는 함수`

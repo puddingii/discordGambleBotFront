@@ -16,4 +16,16 @@ export const useGiveMoneyMutation = () => {
 	});
 };
 
-export default { useGiveMoneyMutation };
+const getGrantMoneyFetch = () =>
+	axios.patch(userQueryKey.getGrantMoney, null, { withCredentials: true });
+
+export const useGetGrantMoneyMutation = () => {
+	const queryClient = useQueryClient();
+	return useMutation(getGrantMoneyFetch, {
+		onSuccess: () => {
+			queryClient.invalidateQueries(userQueryKey.getGrantMoney);
+		},
+	});
+};
+
+export default { useGiveMoneyMutation, useGetGrantMoneyMutation };

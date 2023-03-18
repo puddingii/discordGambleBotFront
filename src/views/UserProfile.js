@@ -1,4 +1,3 @@
-import axios from 'axios';
 import MyVerticallyCenteredModal from 'components/Modal/GiveMoneyModal';
 import { useGetUserInfoQuery } from 'quires/useUserQuery';
 import PropTypes from 'prop-types';
@@ -7,6 +6,7 @@ import React, { useRef, useState } from 'react';
 // react-bootstrap components
 import { Button, Card, Form, Container, Row, Col } from 'react-bootstrap';
 import { setComma } from 'util/util';
+import { useGetGrantMoneyMutation } from 'quires/useUserMutation';
 
 function GrantMoneyLabel({ isLoadingInfo, isFail }) {
 	if (isFail) {
@@ -28,25 +28,23 @@ function GrantMoneyLabel({ isLoadingInfo, isFail }) {
 
 function User() {
 	const [modalShow, setModalShow] = useState(false);
-	const [isLoadingInfo, setLoadingInfo] = useState(false);
-	const [isFail, setIsFail] = useState(false);
 	const myMoneyRef = useRef(null);
-	const { data, refetch: userRefetch } = useGetUserInfoQuery();
-
-	const getGrantMoney = async () => {
-		try {
-			setIsFail(false);
-			setLoadingInfo(true);
-			await axios.patch(`${process.env.REACT_APP_BACK_API}/user/grantmoney`, null, {
-				withCredentials: true,
-			});
-
-			userRefetch();
-		} catch (e) {
-			setIsFail(true);
-		} finally {
-			setLoadingInfo(false);
-		}
+	const {
+		data,
+		refetch: userRefetch,
+		isLoading: isUserInfoLoading,
+	} = useGetUserInfoQuery();
+	const {
+		mutate: getGrantMoneyMutate,
+		isLoading: isGrantMoneyLoading,
+		isError: isGrantMoneyError,
+	} = useGetGrantMoneyMutation();
+	const onClickGrantMoneyButton = () => {
+		getGrantMoneyMutate(null, {
+			onSuccess: () => {
+				userRefetch();
+			},
+		});
 	};
 
 	const nickname = data?.nickname ?? '';
@@ -69,7 +67,14 @@ function User() {
 					<Col md="8">
 						<Card>
 							<Card.Header>
-								<Card.Title as="h4">내 정보</Card.Title>
+								<Card.Title as="h4">
+									내 정보{' '}
+									<i
+										style={{ cursor: 'pointer' }}
+										onClick={userRefetch}
+										className={`nc-icon nc-refresh-02 ${isUserInfoLoading && 'fa-spin'}`}
+									></i>
+								</Card.Title>
 							</Card.Header>
 							<Card.Body>
 								<Form>
@@ -148,15 +153,15 @@ function User() {
 										<Col className="px-1" md="3">
 											<Form.Group>
 												<GrantMoneyLabel
-													isLoadingInfo={isLoadingInfo}
-													isFail={isFail}
+													isLoadingInfo={isGrantMoneyLoading}
+													isFail={isGrantMoneyError}
 												></GrantMoneyLabel>
 												<Form.Control
 													className="btn-primary"
 													defaultValue="보조금 받기"
 													placeholder="받기"
 													type="button"
-													onClick={getGrantMoney}
+													onClick={onClickGrantMoneyButton}
 												></Form.Control>
 											</Form.Group>
 										</Col>
