@@ -25,15 +25,6 @@ import Login from 'views/Login.js';
 import Weapon from 'views/Weapon.js';
 
 const dashboardRoutes = [
-	// {
-	// 	upgrade: true,
-	// 	path: '/upgrade',
-	// 	name: 'Upgrade to PRO',
-	// 	icon: 'nc-icon nc-alien-33',
-	// 	component: Upgrade,
-	// 	layout: '/admin',
-	// 	isLoginRequired: true,
-	// },
 	{
 		path: '/dashboard',
 		name: '내 대시보드',

@@ -27,13 +27,11 @@ import Sidebar from 'components/Sidebar/Sidebar';
 import routes from 'routes.js';
 
 import sidebarImage from 'assets/img/sidebar-4.jpg';
-import { useGetIsLoginQuery } from 'quires/useAuthQuery';
 import { isLoggedIn } from 'recoils/user';
 import { Spinner } from 'react-bootstrap';
 
 function Admin() {
 	const isMutating = useIsMutating();
-	useGetIsLoginQuery();
 	const loginStatus = useRecoilValue(isLoggedIn);
 
 	const myRoutes = routes.filter(route => route.isLoginRequired === loginStatus);

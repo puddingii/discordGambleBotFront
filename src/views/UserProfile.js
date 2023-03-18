@@ -118,7 +118,7 @@ function User() {
 														style={{ cursor: 'pointer' }}
 														className="text-danger"
 														onClick={() => {
-															location.href = '/admin/stock';
+															location.href = '/discordGambleBotFront/admin/stock';
 														}}
 													>
 														자세히
@@ -175,7 +175,7 @@ function User() {
 										className="btn-fill pull-right"
 										variant="info"
 										onClick={() => {
-											location.href = '/admin/stock';
+											location.href = '/discordGambleBotFront/admin/stock';
 										}}
 									>
 										주식관리
