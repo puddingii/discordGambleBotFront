@@ -1,11 +1,12 @@
-import React, { useEffect, useState, useRef } from 'react';
+import React, { useRef } from 'react';
 import { Modal, Button, Form, Container, Row, Col } from 'react-bootstrap';
 import PropTypes from 'prop-types';
 import { useForm } from 'react-hook-form';
 import NotificationAlert from 'react-notification-alert';
 
-import axios from 'axios';
-import { setComma } from '../../util/util';
+import { useGetUserNicknameListQuery } from 'quires/useUserQuery';
+import { useGiveMoneyMutation } from 'quires/useUserMutation';
+import { notify, setComma } from '../../util/util';
 
 function MyVerticallyCenteredModal({
 	onHide,
@@ -22,97 +23,44 @@ function MyVerticallyCenteredModal({
 		watch,
 	} = useForm();
 	const watchMoneyValue = watch('money', false);
-	const [nicknameList, setNicknameList] = useState([]);
-	const [isLoadingInfo, setLoadingInfo] = useState(false);
 	const notificationAlertRef = useRef(null);
-	const notify = (colorType, message) => {
-		let type;
-		switch (colorType) {
-			case 1:
-				type = 'primary';
-				break;
-			case 2:
-				type = 'success';
-				break;
-			case 3:
-				type = 'danger';
-				break;
-			case 4:
-				type = 'warning';
-				break;
-			case 5:
-				type = 'info';
-				break;
-			default:
-				break;
-		}
-		const options = {
-			place: 'tr',
-			message: (
-				<div>
-					<div>{message}</div>
-				</div>
-			),
-			type,
-			icon: 'nc-icon nc-bell-55',
-			autoDismiss: 7,
-		};
-		notificationAlertRef.current.notificationAlert(options);
-	};
+	const {
+		data: nicknameList,
+		status: isDataLoading,
+		refetch: refetchUserNicknameList,
+	} = useGetUserNicknameListQuery();
+	const { mutate: giveMoneyMutate, isLoading: isGiveMoneyMutateLoading } =
+		useGiveMoneyMutation();
+
 	const initFormData = () => {
 		setValue('ptrNickname', '');
 		setValue('money', 1);
 	};
 
-	const fetchData = async () => {
-		setLoadingInfo(true);
-		const result = await axios.get(`${process.env.REACT_APP_BACK_API}/user/nicklist`, {
-			withCredentials: true,
-		});
-		setLoadingInfo(false);
-		const nickList = result.data ?? [];
-		setNicknameList(
-			nickList.filter(nickname => {
-				return nickname !== myNickname;
-			}),
-		);
-	};
-
-	const onSubmit = async data => {
-		try {
-			setLoadingInfo(true);
-			await axios.patch(
-				`${process.env.REACT_APP_BACK_API}/user/give/money`,
-				{ ...data, myNickname },
-				{
-					withCredentials: true,
+	const onSubmit = data => {
+		giveMoneyMutate(
+			{ ...data, myNickname },
+			{
+				onSuccess: () => {
+					notify(notificationAlertRef, 1, '기부성공!');
+					initFormData();
+					dataRefresh();
 				},
-			);
-			notify(1, '기부성공!');
-
-			initFormData();
-			dataRefresh();
-		} catch (e) {
-			let message = '처리에러...';
-			if (e.response) {
-				message = e.response?.data?.message ?? '처리에러...';
-			}
-			notify(3, message);
-		} finally {
-			setLoadingInfo(false);
-		}
+				onError: e => {
+					let message = '처리에러...';
+					if (e.response) {
+						message = e.response?.data?.message ?? '처리에러...';
+					}
+					notify(notificationAlertRef, 3, message);
+				},
+			},
+		);
 	};
 
 	const onCloseModal = () => {
 		initFormData();
 		onHide();
 	};
-
-	useEffect(() => {
-		if (show) {
-			fetchData();
-		}
-	}, [show]);
 
 	return (
 		<Modal
@@ -127,8 +75,11 @@ function MyVerticallyCenteredModal({
 					<Modal.Title>
 						<b>기부하기</b>{' '}
 						<i
-							style={{ display: isLoadingInfo ? '' : 'none' }}
-							className="nc-icon nc-refresh-02 fa-spin"
+							style={{ cursor: 'pointer' }}
+							onClick={refetchUserNicknameList}
+							className={`nc-icon nc-refresh-02${
+								isGiveMoneyMutateLoading || isDataLoading ? 'fa-spin' : ''
+							}`}
 						></i>
 					</Modal.Title>
 				</Modal.Header>
@@ -146,13 +97,15 @@ function MyVerticallyCenteredModal({
 										})}
 									>
 										<option value="">선택</option>
-										{nicknameList.map((nickname, key) => {
-											return (
-												<option key={key} value={nickname}>
-													{nickname}
-												</option>
-											);
-										})}
+										{(nicknameList ?? [])
+											.filter(nickname => nickname !== myNickname)
+											.map((nickname, key) => {
+												return (
+													<option key={key} value={nickname}>
+														{nickname}
+													</option>
+												);
+											})}
 									</Form.Select>
 								</Form.Group>
 							</Col>

@@ -9,6 +9,8 @@ export const QUERY_KEY = {
 	myWeaponList: `${process.env.REACT_APP_BACK_API}/user/weaponlist`,
 	myStock: `${process.env.REACT_APP_BACK_API}/user/stock?`,
 	updateStock: `${process.env.REACT_APP_BACK_API}/user/stock?`,
+	userNicknameList: `${process.env.REACT_APP_BACK_API}/user/nicklist?`,
+	giveMoney: `${process.env.REACT_APP_BACK_API}/user/give/money`,
 };
 
 // useQuery에서 사용할 `서버의 상태를 불러오는데 사용할 Promise를 반환하는 함수`
@@ -32,8 +34,19 @@ export const useGetUserWeaponListQuery = () => {
 	});
 };
 
+const getUserNicknameList = () =>
+	axios
+		.get(QUERY_KEY.userNicknameList, { withCredentials: true })
+		.then(({ data }) => data);
+export const useGetUserNicknameListQuery = () => {
+	return useQuery(QUERY_KEY.userNicknameList, getUserNicknameList, {
+		refetchOnWindowFocus: false,
+	});
+};
+
 export default {
 	useGetUserInfoQuery,
 	useGetUserStockListQuery,
 	useGetUserWeaponListQuery,
+	useGetUserNicknameListQuery,
 };
