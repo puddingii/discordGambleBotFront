@@ -36,7 +36,7 @@ const queryClient = new QueryClient();
 root.render(
 	<RecoilRoot>
 		<QueryClientProvider client={queryClient}>
-			<BrowserRouter>
+			<BrowserRouter basename="/discordGambleBotFront">
 				<Switch>
 					<Route path="/admin" render={props => <AdminLayout {...props} />} />
 					<Redirect from="/" to="/admin/dashboard" />
