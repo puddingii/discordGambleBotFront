@@ -2,17 +2,7 @@ import React from 'react';
 import Swal from 'sweetalert2';
 import withReactContent from 'sweetalert2-react-content';
 // react-bootstrap components
-import {
-	Badge,
-	Button,
-	Card,
-	Form,
-	Navbar,
-	Nav,
-	Container,
-	Row,
-	Col,
-} from 'react-bootstrap';
+import { Button, Card, Container, Row, Col } from 'react-bootstrap';
 import axios from 'axios';
 import { useGetUserWeaponListQuery } from 'quires/useUserQuery';
 import { setComma } from 'util/util';
@@ -20,8 +10,71 @@ import { setComma } from 'util/util';
 function Weapon() {
 	const MySwal = withReactContent(Swal);
 
-	const { data, refetch: stockRefetch, status } = useGetUserWeaponListQuery();
+	const { data, refetch: stockRefetch } = useGetUserWeaponListQuery();
 	const weaponList = data ?? [];
+
+	const onClickEnhanceButton = async (curPower, type) => {
+		const { data } = await axios.get(
+			`${process.env.REACT_APP_BACK_API}/weapon/enhance-info?type=${type}`,
+			{
+				withCredentials: true,
+			},
+		);
+		if (!data) {
+			return;
+		}
+
+		const getTitle = (curPower, beforePower) => {
+			return beforePower ? `${beforePower}강 > ${curPower}강` : `${curPower}강`;
+		};
+
+		const getHTML = data => {
+			return `강화비용: ${setComma(data?.cost ?? 0, true)} 원<br/>성공 ${setComma(
+				(data?.successRatio ?? 0) * 100,
+				true,
+			)}% 실패 ${setComma((data?.failRatio ?? 0) * 100, true)}% 파괴 ${setComma(
+				(data?.destroyRatio ?? 0) * 100,
+				true,
+			)}%`;
+		};
+
+		const fireOptions = {
+			title: getTitle(curPower),
+			html: getHTML(data),
+			showCancelButton: true,
+			confirmButtonText: '강화',
+			cancelButtonText: '취소',
+			showLoaderOnConfirm: true,
+			preConfirm: async () => {
+				const { data } = await axios.patch(
+					`${process.env.REACT_APP_BACK_API}/user/weapon/enhance`,
+					{ type },
+					{ withCredentials: true },
+				);
+				return data;
+			},
+			allowOutsideClick: () => !MySwal.isLoading(),
+		};
+
+		const { isConfirmed, value } = await MySwal.fire(fireOptions);
+		fireOptions.title = getTitle(
+			value?.enhanceResult?.curPower,
+			value?.enhanceResult?.beforePower,
+		);
+		fireOptions.html = getHTML(value);
+		let FLAG = isConfirmed;
+		while (FLAG) {
+			// eslint-disable-next-line no-await-in-loop
+			const { isConfirmed, value } = await MySwal.fire(fireOptions);
+			fireOptions.title = getTitle(
+				value?.enhanceResult?.curPower,
+				value?.enhanceResult?.beforePower,
+			);
+			fireOptions.html = getHTML(value);
+			FLAG = isConfirmed;
+		}
+		stockRefetch();
+	};
 
 	return (
 		<>
@@ -74,67 +127,8 @@ function Weapon() {
 										<Button
 											className="btn-simple btn-icon"
 											href="#pablo"
-											onClick={async () => {
-												const { data } = await axios.get(
-													`${process.env.REACT_APP_BACK_API}/weapon/enhance?type=${weapon.type}`,
-													{
-														withCredentials: true,
-													},
-												);
-												if (!data) {
-													return;
-												}
-
-												const { isConfirmed, value } = await MySwal.fire({
-													title: '강화하기',
-													html: `강화비용: ${setComma(data.cost, true)} 원<br/>성공 ${
-														data.successRatio * 100
-													}% 실패 ${data.failRatio * 100}% 파괴 ${
-														data.destroyRatio * 100
-													}%`,
-													showCancelButton: true,
-													confirmButtonText: '강화',
-													cancelButtonText: '취소',
-													showLoaderOnConfirm: true,
-													preConfirm: async () => {
-														try {
-															const { data } = await axios.patch(
-																`${process.env.REACT_APP_BACK_API}/user/weapon`,
-																{ type: weapon.type },
-																{
-																	withCredentials: true,
-																},
-															);
-															return data;
-														} catch (e) {
-															let message = '처리에러...';
-															if (e.response) {
-																message = e.response?.data?.message ?? '처리에러...';
-															}
-															MySwal.showValidationMessage(`요청오류: ${message}`);
-														}
-														// return fetch(`//api.github.com/users/${login}`)
-														// 	.then(response => {
-														// 		if (!response.ok) {
-														// 			throw new Error(response.statusText);
-														// 		}
-														// 		return response.json();
-														// 	})
-														// 	.catch(error => {
-														// 		MySwal.showValidationMessage(`Request failed: ${error}`);
-														// 	});
-													},
-													allowOutsideClick: () => !MySwal.isLoading(),
-												});
-												if (isConfirmed) {
-													MySwal.fire({
-														title: `ㄴㄴㄴ's avatar`,
-														imageUrl: require(`assets/img/weapon/${'sword'}.jpeg`),
-														imageWidth: 200,
-														imageHeight: 200,
-														text: '히히',
-													});
-												}
+											onClick={() => {
+												onClickEnhanceButton(weapon.curPower, weapon.type);
 											}}
 											variant="primary"
 										>
