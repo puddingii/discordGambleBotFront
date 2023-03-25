@@ -6,6 +6,7 @@ import { Button, Card, Container, Row, Col } from 'react-bootstrap';
 import axios from 'axios';
 import { useGetUserWeaponListQuery } from 'quires/useUserQuery';
 import { setComma } from 'util/util';
+import EnhanceImage from 'assets/img/z.png';
 
 function Weapon() {
 	const MySwal = withReactContent(Swal);
@@ -41,6 +42,16 @@ function Weapon() {
 		const fireOptions = {
 			title: getTitle(curPower),
 			html: getHTML(data),
+			backdrop: `
+				rgba(0,0,0,0)
+				left top
+				no-repeat
+			`,
+			background: `url(${EnhanceImage})`,
+			customClass: {
+				popup: 'enhance-modal',
+			},
+			color: 'white',
 			showCancelButton: true,
 			confirmButtonText: '강화',
 			cancelButtonText: '취소',
