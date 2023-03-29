@@ -65,5 +65,5 @@ export default {
 	useGetUserStockListQuery,
 	useGetUserWeaponListQuery,
 	useGetUserNicknameListQuery,
-	useGetUserStockRatioListQuery,
+	useGetMyDashboardInfoQuery,
 };
