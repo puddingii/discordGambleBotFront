@@ -1,11 +1,12 @@
 {
   "files": {
-    "main.css": "/discordGambleBotFront/static/css/main.806f8ed8.css",
-    "main.js": "/discordGambleBotFront/static/js/main.ad5f6ae0.js",
+    "main.css": "/discordGambleBotFront/static/css/main.4b9329c8.css",
+    "main.js": "/discordGambleBotFront/static/js/main.6f494a72.js",
     "static/media/fa-solid-900.svg": "/discordGambleBotFront/static/media/fa-solid-900.0454203f26b33fc02e2b.svg",
     "static/media/fa-brands-400.svg": "/discordGambleBotFront/static/media/fa-brands-400.991c1c761fc31f9c3252.svg",
     "static/media/fa-solid-900.eot": "/discordGambleBotFront/static/media/fa-solid-900.6606667d9800a27eb8b5.eot",
     "static/media/fa-solid-900.ttf": "/discordGambleBotFront/static/media/fa-solid-900.915a0b79c22a1c1f64da.ttf",
+    "static/media/z.png": "/discordGambleBotFront/static/media/z.d97f962dfd920db7b59a.png",
     "static/media/nucleo-icons.svg": "/discordGambleBotFront/static/media/nucleo-icons.e8827b8a8e3df089befd.svg",
     "static/media/fa-regular-400.svg": "/discordGambleBotFront/static/media/fa-regular-400.f3187c7462849ed261a8.svg",
     "static/media/fa-brands-400.eot": "/discordGambleBotFront/static/media/fa-brands-400.98f20b9ec79b2fee02a3.eot",
@@ -28,11 +29,11 @@
     "static/media/fa-regular-400.woff2": "/discordGambleBotFront/static/media/fa-regular-400.2c154b0f8c0d8d166162.woff2",
     "static/media/nucleo-icons.woff2": "/discordGambleBotFront/static/media/nucleo-icons.69d4ebfdc94eab6fdb6e.woff2",
     "index.html": "/discordGambleBotFront/index.html",
-    "main.806f8ed8.css.map": "/discordGambleBotFront/static/css/main.806f8ed8.css.map",
-    "main.ad5f6ae0.js.map": "/discordGambleBotFront/static/js/main.ad5f6ae0.js.map"
+    "main.4b9329c8.css.map": "/discordGambleBotFront/static/css/main.4b9329c8.css.map",
+    "main.6f494a72.js.map": "/discordGambleBotFront/static/js/main.6f494a72.js.map"
   },
   "entrypoints": [
-    "static/css/main.806f8ed8.css",
-    "static/js/main.ad5f6ae0.js"
+    "static/css/main.4b9329c8.css",
+    "static/js/main.6f494a72.js"
   ]
 }
