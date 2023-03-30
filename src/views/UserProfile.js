@@ -6,9 +6,12 @@ import React, { useRef, useState } from 'react';
 // react-bootstrap components
 import { Button, Card, Form, Container, Row, Col } from 'react-bootstrap';
 import { setComma } from 'util/util';
-import { useGetGrantMoneyMutation } from 'quires/useUserMutation';
+import {
+	useGetGrantMoneyMutation,
+	useGetAllGiftMoneyMutation,
+} from 'quires/useUserMutation';
 
-function GrantMoneyLabel({ isLoadingInfo, isFail }) {
+function MoneyLabel({ isLoadingInfo, isFail }) {
 	if (isFail) {
 		return (
 			<label>
@@ -39,8 +42,20 @@ function User() {
 		isLoading: isGrantMoneyLoading,
 		isError: isGrantMoneyError,
 	} = useGetGrantMoneyMutation();
+	const {
+		mutate: getAllGiftMoneyMutate,
+		isLoading: isGiftMoneyLoading,
+		isError: isGiftMoneyError,
+	} = useGetAllGiftMoneyMutation();
 	const onClickGrantMoneyButton = () => {
 		getGrantMoneyMutate(null, {
+			onSuccess: () => {
+				userRefetch();
+			},
+		});
+	};
+	const onClickGiftMoneyButton = () => {
+		getAllGiftMoneyMutate(null, {
 			onSuccess: () => {
 				userRefetch();
 			},
@@ -51,6 +66,7 @@ function User() {
 	const totalStockValue = data?.totalStockValue ?? 0;
 	const grantMoney = data?.grantMoney ?? 0;
 	const myMoney = data?.myMoney ?? 0;
+	const giftMoney = data?.giftMoney ?? 0;
 	return (
 		<>
 			<Container fluid>
@@ -144,7 +160,7 @@ function User() {
 												<label>보조금 통장(공유통장)</label>
 												<Form.Control
 													value={`${setComma(grantMoney, true)}원`}
-													placeholder="총 주식가치"
+													placeholder="보조금 통장"
 													type="text"
 													disabled
 												></Form.Control>
@@ -152,16 +168,44 @@ function User() {
 										</Col>
 										<Col className="px-1" md="3">
 											<Form.Group>
-												<GrantMoneyLabel
+												<MoneyLabel
 													isLoadingInfo={isGrantMoneyLoading}
 													isFail={isGrantMoneyError}
-												></GrantMoneyLabel>
+												></MoneyLabel>
 												<Form.Control
 													className="btn-primary"
 													defaultValue="보조금 받기"
 													placeholder="받기"
 													type="button"
 													onClick={onClickGrantMoneyButton}
+												></Form.Control>
+											</Form.Group>
+										</Col>
+									</Row>
+									<Row>
+										<Col className="pr-1" md="6">
+											<Form.Group>
+												<label>선물받은 캐쉬</label>
+												<Form.Control
+													value={`${setComma(giftMoney, true)}원`}
+													placeholder="선물받은 캐쉬"
+													type="text"
+													disabled
+												></Form.Control>
+											</Form.Group>
+										</Col>
+										<Col className="px-1" md="3">
+											<Form.Group>
+												<MoneyLabel
+													isLoadingInfo={isGiftMoneyLoading}
+													isFail={isGiftMoneyError}
+												></MoneyLabel>
+												<Form.Control
+													className="btn-primary"
+													defaultValue="캐쉬선물 받기"
+													placeholder="받기"
+													type="button"
+													onClick={onClickGiftMoneyButton}
 												></Form.Control>
 											</Form.Group>
 										</Col>
@@ -222,7 +266,7 @@ function User() {
 	);
 }
 
-GrantMoneyLabel.propTypes = {
+MoneyLabel.propTypes = {
 	isLoadingInfo: PropTypes.bool.isRequired,
 	isFail: PropTypes.bool.isRequired,
 };
