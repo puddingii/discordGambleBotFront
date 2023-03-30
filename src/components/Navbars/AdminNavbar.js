@@ -72,7 +72,7 @@ function Header() {
 					<Navbar.Collapse id="basic-navbar-nav">
 						<Nav className="nav mr-auto" navbar></Nav>
 						<Nav className="ml-auto" navbar>
-							<Dropdown as={Nav.Item}>
+							{/* <Dropdown as={Nav.Item}>
 								<Dropdown.Toggle
 									as={Nav.Link}
 									data-toggle="dropdown"
@@ -101,9 +101,9 @@ function Header() {
 										Another notification
 									</Dropdown.Item>
 								</Dropdown.Menu>
-							</Dropdown>
+							</Dropdown> */}
 							<Nav.Item>
-								<Nav.Link className="m-0" href="#pablo" onClick={e => e.preventDefault()}>
+								<Nav.Link className="m-0" href="/discordGambleBotFront/admin/user">
 									<span className="d-lg-block">접속중: {nickname}</span>
 								</Nav.Link>
 							</Nav.Item>
