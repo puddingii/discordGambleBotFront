@@ -7,7 +7,7 @@ import { useGetMyDashboardInfoQuery } from 'quires/useUserQuery';
 import { setComma } from 'util/util';
 
 function Dashboard() {
-	const { data, refetch: summaryRefetch, status } = useGetMyDashboardInfoQuery();
+	const { data, refetch: summaryRefetch, isFetching } = useGetMyDashboardInfoQuery();
 	const ratioList = data?.stockRatioList.filter(ratioInfo => ratioInfo.value !== 0) ?? [];
 	const myMoney = data?.money ?? 0;
 	const stockProfit = data?.stockProfit ?? 0;
@@ -60,9 +60,13 @@ function Dashboard() {
 							</Card.Body>
 							<Card.Footer>
 								<hr></hr>
-								<div className="stats">
-									<i className="fas fa-redo mr-1"></i>
-									Update Now
+								<div
+									className="stats"
+									style={{ cursor: 'pointer' }}
+									onClick={summaryRefetch}
+								>
+									<i className={`fas fa-redo mr-1 ${isFetching && 'fa-spin'}`}></i>
+									갱신하기
 								</div>
 							</Card.Footer>
 						</Card>
@@ -73,7 +77,7 @@ function Dashboard() {
 								<Row>
 									<Col xs="5">
 										<div className="icon-big text-center icon-warning">
-											<i className="nc-icon nc-light-3 text-success"></i>
+											<i className="nc-icon nc-send text-success"></i>
 										</div>
 									</Col>
 									<Col xs="7">
@@ -91,9 +95,13 @@ function Dashboard() {
 							</Card.Body>
 							<Card.Footer>
 								<hr></hr>
-								<div className="stats">
-									<i className="far fa-calendar-alt mr-1"></i>
-									Last day
+								<div
+									className="stats"
+									style={{ cursor: 'pointer' }}
+									onClick={summaryRefetch}
+								>
+									<i className={`fas fa-redo mr-1 ${isFetching && 'fa-spin'}`}></i>
+									갱신하기
 								</div>
 							</Card.Footer>
 						</Card>
@@ -103,8 +111,8 @@ function Dashboard() {
 					<Col md="12">
 						<Card>
 							<Card.Header>
-								<Card.Title as="h4">Email Statistics</Card.Title>
-								<p className="card-category">Last Campaign Performance</p>
+								<Card.Title as="h4">주식보유 비중</Card.Title>
+								<p className="card-category">단위: %</p>
 							</Card.Header>
 							<Card.Body>
 								<ReactECharts option={options} />

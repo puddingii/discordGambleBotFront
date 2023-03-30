@@ -32,7 +32,7 @@ function User() {
 	const {
 		data,
 		refetch: userRefetch,
-		isLoading: isUserInfoLoading,
+		isFetching: isUserInfoLoading,
 	} = useGetUserInfoQuery();
 	const {
 		mutate: getGrantMoneyMutate,
