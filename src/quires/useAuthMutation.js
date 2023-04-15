@@ -20,10 +20,8 @@ export const useUserLoginMutation = () => {
 		// mutate 요청이 성공한 후 queryClient.invalidateQueries 함수를 통해
 		// useTodosQuery에서 불러온 API Response의 Cache를 초기화
 		onSuccess: ({ data }) => {
-			if (data?.user) {
-				setMyNickname(() => data.user?.nickname ?? 'Unknown User');
-				setIsLoggedIn(() => true);
-			}
+			setMyNickname(() => data ?? 'Unknown User');
+			setIsLoggedIn(() => true);
 			queryClient.invalidateQueries(userQueryKey.login);
 		},
 	});

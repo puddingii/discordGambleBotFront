@@ -10,7 +10,7 @@ const giveMoneyFetcher = contents =>
 
 export const useGiveMoneyMutation = () => {
 	const queryClient = useQueryClient();
-	return useLoginMutation(giveMoneyFetcher, {
+	return useLoginMutation(userQueryKey.giveMoney, giveMoneyFetcher, {
 		onSuccess: () => {
 			queryClient.invalidateQueries(userQueryKey.giveMoney);
 		},
