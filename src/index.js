@@ -18,7 +18,7 @@
 import React from 'react';
 import ReactDOM from 'react-dom/client';
 
-import { BrowserRouter, Route, Switch, Redirect } from 'react-router-dom';
+import { Route, Switch, Redirect, HashRouter } from 'react-router-dom';
 import { QueryClient, QueryClientProvider } from 'react-query';
 import { RecoilRoot } from 'recoil';
 
@@ -36,12 +36,12 @@ const queryClient = new QueryClient();
 root.render(
 	<RecoilRoot>
 		<QueryClientProvider client={queryClient}>
-			<BrowserRouter basename="/discordGambleBotFront">
+			<HashRouter basename="/discordGambleBotFront">
 				<Switch>
 					<Route path="/admin" render={props => <AdminLayout {...props} />} />
 					<Redirect from="/" to="/admin/dashboard" />
 				</Switch>
-			</BrowserRouter>
+			</HashRouter>
 		</QueryClientProvider>
 	</RecoilRoot>,
 );
