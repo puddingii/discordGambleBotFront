@@ -138,7 +138,8 @@ function Weapon() {
 										<Button
 											className="btn-simple btn-icon"
 											href="#pablo"
-											onClick={() => {
+											onClick={e => {
+												e.preventDefault();
 												onClickEnhanceButton(weapon.curPower, weapon.type);
 											}}
 											variant="primary"
