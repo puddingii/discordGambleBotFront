@@ -1,7 +1,7 @@
 {
   "files": {
     "main.css": "/discordGambleBotFront/static/css/main.4b9329c8.css",
-    "main.js": "/discordGambleBotFront/static/js/main.6013eca2.js",
+    "main.js": "/discordGambleBotFront/static/js/main.3802d216.js",
     "static/media/fa-solid-900.svg": "/discordGambleBotFront/static/media/fa-solid-900.0454203f26b33fc02e2b.svg",
     "static/media/fa-brands-400.svg": "/discordGambleBotFront/static/media/fa-brands-400.991c1c761fc31f9c3252.svg",
     "static/media/fa-solid-900.eot": "/discordGambleBotFront/static/media/fa-solid-900.6606667d9800a27eb8b5.eot",
@@ -30,10 +30,10 @@
     "static/media/nucleo-icons.woff2": "/discordGambleBotFront/static/media/nucleo-icons.69d4ebfdc94eab6fdb6e.woff2",
     "index.html": "/discordGambleBotFront/index.html",
     "main.4b9329c8.css.map": "/discordGambleBotFront/static/css/main.4b9329c8.css.map",
-    "main.6013eca2.js.map": "/discordGambleBotFront/static/js/main.6013eca2.js.map"
+    "main.3802d216.js.map": "/discordGambleBotFront/static/js/main.3802d216.js.map"
   },
   "entrypoints": [
     "static/css/main.4b9329c8.css",
-    "static/js/main.6013eca2.js"
+    "static/js/main.3802d216.js"
   ]
 }
