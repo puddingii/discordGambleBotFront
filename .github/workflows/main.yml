@@ -1,4 +1,4 @@
-name: CI/CD Docker
+name: CI/CD
 
 # 트리거를 수행할 브랜치를 지정합니다.
 on:
@@ -12,7 +12,7 @@ env:
 jobs:
   # 빌드 Job
   build:
-    name: Build
+    name: Build/Deploy
     runs-on: ubuntu-latest
     steps:
       # github repository에서 checkout
@@ -35,9 +35,19 @@ jobs:
           restore-keys: |
             ${{ runner.os }}-yarn-
 
-      - run: yarn install --frozen-lockfile
+      - name: Install dependencies
+        run: yarn install --frozen-lockfile
+
+      - name: Create Dotenv
+        run: |
+          touch .env
+          echo REACT_APP_BACK_API=${{ secrets.REACT_APP_BACK_API }} >> .env
+
       # https://github.com/orgs/community/discussions/25228
-      - run: CI='' yarn build
+      - name: Build
+        run: CI='' yarn build
+        env:
+          REACT_APP_BACK_API: ${{ secrets.REACT_APP_BACK_API }}
 
       - name: Deploy
         uses: peaceiris/actions-gh-pages@v3
