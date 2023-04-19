@@ -7,10 +7,7 @@ on:
 
 # 환경설정
 env:
-  DOCKER_IMAGE: ghcr.io/${{ github.actor }}/discordgamblebot
   VERSION: ${{ github.sha }}
-  NAME: go_cicd
-  VOLUME_LOG: bot-log
 
 jobs:
   # 빌드 Job
@@ -39,7 +36,8 @@ jobs:
             ${{ runner.os }}-yarn-
 
       - run: yarn install --frozen-lockfile
-      - run: yarn build
+      # https://github.com/orgs/community/discussions/25228
+      - run: CI='' yarn build
 
       - name: Deploy
         uses: peaceiris/actions-gh-pages@v3
